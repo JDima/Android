@@ -1,0 +1,46 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.sbpmap.MainActivity" >
+    
+     <item android:id="@+id/places"
+        android:title="@string/places"
+        android:orderInCategory="100"
+        android:showAsAction="never" >
+ 
+        <menu>
+            <group
+                android:checkableBehavior="all">
+                <item android:id="@+id/restaurant"
+                    android:title="@string/restaurant"
+                    android:orderInCategory="100"
+                    android:showAsAction="never" />
+ 
+                <item android:id="@+id/hotels"
+                    android:title="@string/hotels"
+                    android:orderInCategory="100"
+                    android:showAsAction="never"/>
+ 
+                <item android:id="@+id/museum"
+                    android:title="@string/museum"
+                    android:orderInCategory="100"
+                    android:showAsAction="never" />
+                
+                <item android:id="@+id/hostels"
+                    android:title="@string/hostels"
+                    android:orderInCategory="100"
+                    android:showAsAction="never" />
+            </group>
+        </menu>
+    </item>
+
+    <item android:id="@+id/search"
+    android:title="@string/search"
+    android:orderInCategory="100"
+    android:showAsAction="never" />
+
+    <item android:id="@+id/clean"
+        android:title="@string/clean"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+</menu>

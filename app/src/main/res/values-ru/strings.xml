@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Карта Спб</string>
+    <string name="action_settings">Настройки</string>
+    <string name="search">Поиск</string>
+    <string name="clean">Очистить</string>
+
+    <string name="name">Название места:</string>
+    <string name="address">Адрес:</string>
+    <string name="phone">Телефон:</string>
+    <string name="hours">Время работы:</string>
+    <string name="bill">Средний счёт:</string>
+
+    <string name="restaurant">Рестораны</string>
+    <string name="hotels">Отели</string>
+    <string name="museum">Музей</string>
+    <string name="places">Места</string>
+    <string name="hostels">Хостел</string>
+
+
+</resources>

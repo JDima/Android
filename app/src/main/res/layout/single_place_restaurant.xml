@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars = "vertical"
+        android:scrollbarStyle="insideInset"
+        android:id="@+id/scroll">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <!-- Name Label -->
+            <TextView
+                android:text="@string/name"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/textview_height"
+                android:textStyle="bold"/>
+
+            <!--  Name Value -->
+            <TextView
+                android:id="@+id/res_name"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/textview_height"/>
+
+            <!-- stub string -->
+
+            <!-- Name Label -->
+            <TextView
+                android:text="@string/address"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/textview_height"
+                android:textStyle="bold"/>
+
+            <!--  Name Value -->
+            <TextView
+                android:id="@+id/res_address"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/textview_height"/>
+
+            <!-- Name Label -->
+            <TextView
+                android:text="@string/phone"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/textview_height"
+                android:textStyle="bold"/>
+
+            <!--  Name Value -->
+            <TextView
+                android:id="@+id/res_phone"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/textview_height"/>
+
+            <!-- Cost Value -->
+            <TextView
+                android:text="@string/bill"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/textview_height"
+                android:textStyle="bold"/>
+
+            <!--  Cost Value -->
+            <TextView
+                android:id="@+id/res_bill"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/textview_height"/>
+
+            <!-- Name Label -->
+            <TextView
+                android:text="@string/hours"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/textview_height"
+                android:textStyle="bold"/>
+
+            <!--  Name Value -->
+            <TextView
+                android:id="@+id/res_hours"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"/>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
