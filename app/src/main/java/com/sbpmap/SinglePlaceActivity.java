@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.sbpmap.Foursquare.FoursquareAPI;
 import com.sbpmap.Map.API;
 import com.sbpmap.Map.WebPlaceFinder;
@@ -17,6 +19,13 @@ import com.sbpmap.Utils.AlertDialogManager;
 
 public class SinglePlaceActivity extends Activity{
       public static final String NOT_PRESENT = "Not present";
+      public static final String VENUE_ID = "venue_id";
+      public static final String BOUNDS_XL = "bounds_xl";
+      public static final String BOUNDS_XR = "bounds_xr";
+      public static final String BOUNDS_YL = "bounds_yl";
+      public static final String BOUNDS_YR = "bounds_yr";
+
+
 	  ProgressDialog pDialog;
       AlertDialogManager alert = new AlertDialogManager();
 
@@ -26,8 +35,10 @@ public class SinglePlaceActivity extends Activity{
 	      setContentView(R.layout.single_place);
 	         
 	      Intent i = getIntent();
-	         
-	      String venueId = i.getStringExtra(WebPlaceFinder.VENUE_ID);
+	      String venueId = i.getStringExtra(VENUE_ID);
+          LatLngBounds latLngBounds = new LatLngBounds(new LatLng(i.getDoubleExtra(BOUNDS_XL, 0), i.getDoubleExtra(BOUNDS_XR, 0)),
+                                                       new LatLng(i.getDoubleExtra(BOUNDS_YL, 0), i.getDoubleExtra(BOUNDS_YR, 0)));
+
 	      //alert.showAlertDialog(SinglePlaceActivity.this, "trtr",
 	      //	  venueId, false);
 
@@ -38,7 +49,7 @@ public class SinglePlaceActivity extends Activity{
           }
           else if (venueId.length() < 7) {
               setContentView(R.layout.single_place_restaurant);
-              api = new RestoclubAPI();
+              api = new RestoclubAPI(latLngBounds);
           } else {
               setContentView(R.layout.single_place);
               api = new FoursquareAPI();

@@ -42,7 +42,7 @@
             <TextView
                 android:id="@+id/hotel_address"
                 android:layout_width="fill_parent"
-                android:layout_height="@dimen/textview_height"/>
+                android:layout_height="@dimen/extra_textview_height"/>
 
             <!-- Cost Value -->
             <TextView

@@ -2,6 +2,7 @@ package com.sbpmap.Restoclub;
 
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.sbpmap.Map.API;
 import com.sbpmap.Map.Place;
 import com.sbpmap.R;
@@ -28,6 +29,12 @@ import java.util.Map;
 public class RestoclubAPI implements API {
 
     private static final String RESTOCLUB = "http://www.restoclub.ru/site/all/main/";
+    private LatLngBounds latLngBounds;
+
+
+    public RestoclubAPI(LatLngBounds latLngBounds) {
+        this.latLngBounds = latLngBounds;
+    }
 
     @Override
     public HttpUriRequest getPlacesRequest(String query, int radius, double lat, double lng) {
@@ -35,10 +42,10 @@ public class RestoclubAPI implements API {
 
         try {
             List<NameValuePair> params = new ArrayList<>(1);
-            params.add(new BasicNameValuePair("xl", String.valueOf(29.545518254473848)));
-            params.add(new BasicNameValuePair("xr", String.valueOf(31.18934760017696)));
-            params.add(new BasicNameValuePair("yl", String.valueOf(60.02548452161505)));
-            params.add(new BasicNameValuePair("yr", String.valueOf(59.64531086710459)));
+            params.add(new BasicNameValuePair("xl", String.valueOf(latLngBounds.southwest.longitude)));
+            params.add(new BasicNameValuePair("xr", String.valueOf(latLngBounds.northeast.longitude)));
+            params.add(new BasicNameValuePair("yl", String.valueOf(latLngBounds.northeast.latitude)));
+            params.add(new BasicNameValuePair("yr", String.valueOf(latLngBounds.southwest.latitude)));
             params.add(new BasicNameValuePair("cur_user", "0"));
             httppost.setEntity(new UrlEncodedFormEntity(params));
         } catch (Exception e) {

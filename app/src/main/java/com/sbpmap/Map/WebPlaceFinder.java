@@ -31,7 +31,6 @@ public class WebPlaceFinder {
     private AssetManager assetManager;
     AlertDialogManager alert = new AlertDialogManager();
 
-    public static final String VENUE_ID = "venue_id";
     public static final String HOTEL = "Hotel";
     public static final String HOSTEL = "Hostel";
     public static final String MINI_HOTEL = "Mini-hotel";
@@ -59,7 +58,7 @@ public class WebPlaceFinder {
     public void execute(double lat, double lng, String query, int radius) {
         API api;
         if (query.equals(RESTAURANT)) {
-            api = new RestoclubAPI();
+            api = new RestoclubAPI(googleMap.getProjection().getVisibleRegion().latLngBounds);
         } else if(query.equals(HOSTEL) || query.equals(HOTEL) || query.equals(MINI_HOTEL)) {
           api = new OstrovokAPI(assetManager);
         }

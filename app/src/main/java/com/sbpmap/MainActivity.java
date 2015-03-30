@@ -3,6 +3,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.sbpmap.Map.WebPlaceFinder;
 import com.sbpmap.Utils.AlertDialogManager;
@@ -13,6 +14,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,23 +49,21 @@ public class MainActivity extends Activity {
         googleMap = ((MapFragment) getFragmentManager().findFragmentById(
                 R.id.map)).getMap();
         cd = new ConnectionDetector(getApplicationContext());
-
         if (googleMap != null) {
 
             fp = new WebPlaceFinder(googleMap, getAssets());
         
-            /*gps = new GPSTracker(this);
+            gps = new GPSTracker(this);
             if (gps.canGetLocation()) {
                 alert.showAlertDialog(MainActivity.this, "GPS Status",
                         "latitude:" + gps.getLatitude() + ", longitude: " + gps.getLongitude(),
                         false);
-                Log.d("Your Location", "latitude:" + gps.getLatitude() + ", longitude: " + gps.getLongitude());
             } else {
                 alert.showAlertDialog(MainActivity.this, "GPS Status",
                         "Couldn't get location information. Please enable GPS",
                         false);
                 return;
-            }*/
+            }
 
             googleMap.setMyLocationEnabled(true);
             googleMap.setOnMarkerClickListener(new OnMarkerClickListener()
@@ -77,14 +77,20 @@ public class MainActivity extends Activity {
                         return false;
                     }
                     Intent in = new Intent(getApplicationContext(), SinglePlaceActivity.class);
-                    in.putExtra(WebPlaceFinder.VENUE_ID, arg.getSnippet());
+
+                    LatLngBounds latLngBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
+                    in.putExtra(SinglePlaceActivity.BOUNDS_XL, latLngBounds.southwest.longitude);
+                    in.putExtra(SinglePlaceActivity.BOUNDS_XR, latLngBounds.northeast.longitude);
+                    in.putExtra(SinglePlaceActivity.BOUNDS_YL, latLngBounds.northeast.latitude);
+                    in.putExtra(SinglePlaceActivity.BOUNDS_YR, latLngBounds.southwest.latitude);
+                    in.putExtra(SinglePlaceActivity.VENUE_ID, arg.getSnippet());
+
                     startActivity(in);
                     //Toast.makeText(MainActivity.this, arg0.getSnippet(), 1000).show();
                     return false;
                 }
 
             });
-
             googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
                 @Override
@@ -96,8 +102,11 @@ public class MainActivity extends Activity {
                                 fp.execute(arg0.latitude, arg0.longitude, WebPlaceFinder.VENUES[id], 1000);
                             }
                         }
-                        //Toast.makeText(MainActivity.this, "Current pos:"
-                        //        + arg0.longitude + " " + arg0.latitude, Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "Current pos:"
+                                 + googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude + " --"
+                                + googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.longitude + " --"
+                                + googleMap.getProjection().getVisibleRegion().latLngBounds.southwest.latitude + " --"
+                                + googleMap.getProjection().getVisibleRegion().latLngBounds.southwest.longitude, Toast.LENGTH_LONG).show();
                     }
                 }
             });
