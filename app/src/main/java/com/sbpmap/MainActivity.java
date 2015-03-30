@@ -18,6 +18,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 public class MainActivity extends Activity {
 	private GoogleMap googleMap;
     private boolean isSearh = false;
@@ -38,26 +41,16 @@ public class MainActivity extends Activity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-    	/*if (!detectOpenGLES20()) {
-    		Toast.makeText(MainActivity.this, "You need to install OpenGL 2!", LENGTH_LONG).show();
-            this.finish();
-        }*/
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
         googleMap = ((MapFragment) getFragmentManager().findFragmentById(
                 R.id.map)).getMap();
         cd = new ConnectionDetector(getApplicationContext());
-        
-        //if (!isInternetPresent) {
-        //    alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-        //            "Please connect to working Internet connection", false);
-        //    return;
-       // }
+
         if (googleMap != null) {
 
-
-            fp = new WebPlaceFinder(googleMap);
+            fp = new WebPlaceFinder(googleMap, getAssets());
         
             /*gps = new GPSTracker(this);
             if (gps.canGetLocation()) {
@@ -78,6 +71,11 @@ public class MainActivity extends Activity {
 
                 @Override
                 public boolean onMarkerClick(Marker arg) {
+                    if (!cd.isConnectingToInternet()) {
+                        alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
+                                "Please connect to working Internet connection", false);
+                        return false;
+                    }
                     Intent in = new Intent(getApplicationContext(), SinglePlaceActivity.class);
                     in.putExtra(WebPlaceFinder.VENUE_ID, arg.getSnippet());
                     startActivity(in);
@@ -98,8 +96,8 @@ public class MainActivity extends Activity {
                                 fp.execute(arg0.latitude, arg0.longitude, WebPlaceFinder.VENUES[id], 1000);
                             }
                         }
-                        Toast.makeText(MainActivity.this, "Current pos:"
-                                + arg0.longitude + " " + arg0.latitude, Toast.LENGTH_LONG).show();
+                        //Toast.makeText(MainActivity.this, "Current pos:"
+                        //        + arg0.longitude + " " + arg0.latitude, Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -126,6 +124,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	String query = null;
+        isSearh = false;
     	if (!cd.isConnectingToInternet()) {
     		alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
                     "Please connect to working Internet connection", false);
@@ -147,11 +146,11 @@ public class MainActivity extends Activity {
         case R.id.places:
             return true;
 
-        case R.id.hotels:
+        case R.id.hotel:
         	query = WebPlaceFinder.HOTEL;
             break;
 
-        case R.id.hostels:
+        case R.id.hostel:
         	query = WebPlaceFinder.HOSTEL;
             break;
 
@@ -162,8 +161,11 @@ public class MainActivity extends Activity {
         case R.id.museum:
         	query = WebPlaceFinder.MUSEUM;
             break;
+        case R.id.minihotel:
+            query = WebPlaceFinder.MINI_HOTEL;
+            break;
         }
-        
+
         if(item.isChecked()) {
         	fp.remove(query);
             item.setChecked(false);

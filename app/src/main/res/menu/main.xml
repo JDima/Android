@@ -16,8 +16,8 @@
                     android:orderInCategory="100"
                     android:showAsAction="never" />
  
-                <item android:id="@+id/hotels"
-                    android:title="@string/hotels"
+                <item android:id="@+id/hotel"
+                    android:title="@string/hotel"
                     android:orderInCategory="100"
                     android:showAsAction="never"/>
  
@@ -26,8 +26,12 @@
                     android:orderInCategory="100"
                     android:showAsAction="never" />
                 
-                <item android:id="@+id/hostels"
-                    android:title="@string/hostels"
+                <item android:id="@+id/hostel"
+                    android:title="@string/hostel"
+                    android:orderInCategory="100"
+                    android:showAsAction="never" />
+                <item android:id="@+id/minihotel"
+                    android:title="@string/minihotel"
                     android:orderInCategory="100"
                     android:showAsAction="never" />
             </group>

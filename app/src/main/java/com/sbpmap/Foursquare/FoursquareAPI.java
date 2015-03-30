@@ -66,4 +66,9 @@ public class FoursquareAPI implements API {
     public String getSinglePlace(String venueId) {
         return HttpRequest.SEND(getSinglePlaceRequest(venueId));
     }
+
+    @Override
+    public String getResponse(HttpUriRequest httpUriRequest) {
+        return HttpRequest.SEND(httpUriRequest);
+    }
 }

@@ -20,4 +20,6 @@ public interface API {
     void createSinglePage(SinglePlaceActivity singlePlaceActivity, String response);
 
     String getSinglePlace(String query);
+
+    String getResponse(HttpUriRequest httpUriRequest);
 }

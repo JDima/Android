@@ -35,10 +35,10 @@ public class RestoclubAPI implements API {
 
         try {
             List<NameValuePair> params = new ArrayList<>(1);
-            params.add(new BasicNameValuePair("xl", String.valueOf(30.399)));
-            params.add(new BasicNameValuePair("xr", String.valueOf(30.450)));
-            params.add(new BasicNameValuePair("yl", String.valueOf(59.933)));
-            params.add(new BasicNameValuePair("yr", String.valueOf(59.921)));
+            params.add(new BasicNameValuePair("xl", String.valueOf(29.545518254473848)));
+            params.add(new BasicNameValuePair("xr", String.valueOf(31.18934760017696)));
+            params.add(new BasicNameValuePair("yl", String.valueOf(60.02548452161505)));
+            params.add(new BasicNameValuePair("yr", String.valueOf(59.64531086710459)));
             params.add(new BasicNameValuePair("cur_user", "0"));
             httppost.setEntity(new UrlEncodedFormEntity(params));
         } catch (Exception e) {
@@ -80,5 +80,10 @@ public class RestoclubAPI implements API {
     @Override
     public String getSinglePlace(String query) {
         return HttpRequest.gerSourcePage(RESTOCLUB + query);
+    }
+
+    @Override
+    public String getResponse(HttpUriRequest httpUriRequest) {
+        return HttpRequest.SEND(httpUriRequest);
     }
 }

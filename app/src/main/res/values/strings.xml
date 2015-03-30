@@ -13,12 +13,15 @@
     <string name="phone">Phone:</string>
     <string name="hours">Opening hours:</string>
     <string name="bill">Bill:</string>
+    <string name="price_by_night">Price by night:</string>
+    <string name="definition">Definition:</string>
 
     <string name="restaurant">Restaurants</string>
-    <string name="hotels">Hotels</string>
+    <string name="hotel">Hotels</string>
     <string name="museum">Museum</string>
     <string name="places">Places</string>
-    <string name="hostels">Hostels</string>
+    <string name="hostel">Hostels</string>
+    <string name="minihotel">Mini-hotel</string>
 
     <string name="google_maps_key">AIzaSyBUgwpFyFaoAQusQ_TdIQrwCctMrlJ5pdc</string>
 

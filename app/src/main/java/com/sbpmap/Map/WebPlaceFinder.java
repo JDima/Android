@@ -1,9 +1,13 @@
 package com.sbpmap.Map;
 
 
+import android.app.Activity;
+import android.content.res.AssetManager;
 import android.os.AsyncTask;
 
 import com.sbpmap.Foursquare.FoursquareAPI;
+import com.sbpmap.MainActivity;
+import com.sbpmap.Ostrovok.OstrovokAPI;
 import com.sbpmap.Restoclub.RestoclubAPI;
 import com.sbpmap.Utils.APIRequest;
 import com.sbpmap.Utils.AlertDialogManager;
@@ -24,19 +28,20 @@ public class WebPlaceFinder {
     Map<String, Integer> imgMarkers = new HashMap<>();
 
     private GoogleMap googleMap;
+    private AssetManager assetManager;
     AlertDialogManager alert = new AlertDialogManager();
 
     public static final String VENUE_ID = "venue_id";
-    public static final String HOTEL = "hotel";
-    public static final String HOSTEL = "hostel";
-    public static final String MUSEUM = "museum";
-    public static final String RESTAURANT = "restaurant";
+    public static final String HOTEL = "Hotel";
+    public static final String HOSTEL = "Hostel";
+    public static final String MINI_HOTEL = "Mini-hotel";
+    public static final String MUSEUM = "Museum";
+    public static final String RESTAURANT = "Restaurant";
 
-    public static final String[] VENUES = {RESTAURANT, HOTEL, MUSEUM, HOSTEL};
+    public static final String[] VENUES = {RESTAURANT, HOTEL, MUSEUM, HOSTEL, MINI_HOTEL};
 
-    public WebPlaceFinder(GoogleMap googleMap) {
-        String[] queries = {"hostel", "hotel", "museum", "restaurant"};
-        for (String query : queries) {
+    public WebPlaceFinder(GoogleMap googleMap, AssetManager assetManager) {
+        for (String query : VENUES) {
             venuesList.put(query, new ArrayList<Place>());
             tasksList.put(query, new ArrayList<PlaceFinder>());
         }
@@ -45,20 +50,20 @@ public class WebPlaceFinder {
         imgMarkers.put(HOTEL, R.drawable.hotel);
         imgMarkers.put(RESTAURANT, R.drawable.restaurant);
         imgMarkers.put(MUSEUM, R.drawable.museum);
+        imgMarkers.put(MINI_HOTEL, R.drawable.minihotel);
 
+        this.assetManager = assetManager;
         this.googleMap = googleMap;
     }
 
     public void execute(double lat, double lng, String query, int radius) {
-        /*for (int i = -5; i <= 5; i++) {
-			for (int j = -5; j <= 5; j++) {
-				new PlaceFinder().execute(query, String.valueOf(radius), String.valueOf(lat + 0.01 * i), String.valueOf(lng + 0.01 * j));
-			}
-		}*/
         API api;
         if (query.equals(RESTAURANT)) {
             api = new RestoclubAPI();
-        } else {
+        } else if(query.equals(HOSTEL) || query.equals(HOTEL) || query.equals(MINI_HOTEL)) {
+          api = new OstrovokAPI(assetManager);
+        }
+        else {
             api = new FoursquareAPI();
         }
 
@@ -75,8 +80,7 @@ public class WebPlaceFinder {
             api = params[0].api;
             query = params[0].query;
             tasksList.get(query).add(this);
-            response = HttpRequest.SEND(params[0].httpUriRequest);
-
+            response = api.getResponse(params[0].httpUriRequest); //HttpRequest.SEND(params[0].httpUriRequest);
             return "";
         }
 
