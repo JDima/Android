@@ -1,4 +1,6 @@
 package com.sbpmap;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
@@ -9,25 +11,25 @@ import com.sbpmap.Map.WebPlaceFinder;
 import com.sbpmap.Utils.AlertDialogManager;
 import com.sbpmap.Utils.ConnectionDetector;
 import com.sbpmap.Utils.GPSTracker;
+import com.sbpmap.Utils.CustomWindowAdapter;
 
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.InputStream;
 
 public class MainActivity extends Activity {
 	private GoogleMap googleMap;
     private boolean isSearh = false;
     private Menu menu;
-
+    private static final LatLngBounds saintPetersburgBounds = new LatLngBounds(
+                                                    new LatLng(59.71584, 30.09941),
+                                                    new LatLng(60.09037, 30.61897));
 
     ConnectionDetector cd;
     AlertDialogManager alert = new AlertDialogManager();
@@ -49,7 +51,20 @@ public class MainActivity extends Activity {
         googleMap = ((MapFragment) getFragmentManager().findFragmentById(
                 R.id.map)).getMap();
         cd = new ConnectionDetector(getApplicationContext());
+
+        if (!cd.isConnectingToInternet()) {
+            alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
+                    "Please connect to working Internet connection", false);
+        }
+
         if (googleMap != null) {
+
+            googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                @Override
+                public void onMapLoaded() {
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(saintPetersburgBounds, 10));
+                }
+            });
 
             fp = new WebPlaceFinder(googleMap, getAssets());
         
@@ -63,9 +78,11 @@ public class MainActivity extends Activity {
                 return;
             }
 
+            googleMap.setInfoWindowAdapter(new CustomWindowAdapter(getLayoutInflater()));
+
             googleMap.setMyLocationEnabled(true);
-            googleMap.setOnMarkerClickListener(new OnMarkerClickListener()
-            {
+
+            googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 
                 @Override
                 public boolean onMarkerClick(Marker arg) {
@@ -84,6 +101,7 @@ public class MainActivity extends Activity {
                     in.putExtra(SinglePlaceActivity.VENUE_ID, arg.getSnippet());
 
                     startActivity(in);
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(arg.getPosition()));
                     //Toast.makeText(MainActivity.this, arg0.getSnippet(), 1000).show();
                     return false;
                 }
@@ -100,18 +118,17 @@ public class MainActivity extends Activity {
                                 fp.execute(arg0.latitude, arg0.longitude, WebPlaceFinder.VENUES[id], 1000);
                             }
                         }
-                        Toast.makeText(MainActivity.this, "Current pos:"
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(arg0.latitude, arg0.longitude), 15));
+                        /*Toast.makeText(MainActivity.this, "Current pos:"
                                  + googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude + " --"
                                 + googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.longitude + " --"
                                 + googleMap.getProjection().getVisibleRegion().latLngBounds.southwest.latitude + " --"
-                                + googleMap.getProjection().getVisibleRegion().latLngBounds.southwest.longitude, Toast.LENGTH_LONG).show();
+                                + googleMap.getProjection().getVisibleRegion().latLngBounds.southwest.longitude, Toast.LENGTH_LONG).show(); */
                     }
                 }
             });
+
             googleMap.getUiSettings().setZoomControlsEnabled(true);
-        } else {
-            alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                    "Please connect to working Internet connection", false);
         }
     }
  

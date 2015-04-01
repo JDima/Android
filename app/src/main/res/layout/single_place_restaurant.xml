@@ -19,7 +19,8 @@
             <TextView
                 android:text="@string/name"
                 android:layout_width="fill_parent"
-                android:layout_height="@dimen/textview_height"/>
+                android:layout_height="@dimen/textview_height"
+                android:textStyle="bold"/>
 
             <!--  Name Value -->
             <TextView
@@ -39,7 +40,8 @@
             <!--  Name Value -->
             <TextView
                 android:id="@+id/res_address"
-                android:layout_width="fill_parent"/>
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/extra_textview_height"/>
 
             <!-- Name Label -->
             <TextView
