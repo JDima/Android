@@ -18,10 +18,13 @@
 
     <string name="restaurant">Restaurants</string>
     <string name="hotel">Hotels</string>
-    <string name="museum">Museum</string>
+    <string name="landmark">Landmarks</string>
     <string name="places">Places</string>
     <string name="hostel">Hostels</string>
-    <string name="minihotel">Mini-hotel</string>
+    <string name="minihotel">Mini-hotels</string>
+    <string name="bridge">Brdiges</string>
+    <string name="park">Parks</string>
+    <string name="monument">Monuments</string>
 
     <string name="google_maps_key">AIzaSyBUgwpFyFaoAQusQ_TdIQrwCctMrlJ5pdc</string>
 

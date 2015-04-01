@@ -12,14 +12,17 @@
     <string name="hours">Время работы:</string>
     <string name="bill">Средний счёт:</string>
     <string name="price_by_night">Цена за ночь:</string>
-    <string name="definition">Описание</string>
+    <string name="definition">Описание:</string>
 
     <string name="restaurant">Рестораны</string>
     <string name="hotel">Отели</string>
-    <string name="museum">Музей</string>
+    <string name="landmark">Достопримечательности</string>
     <string name="places">Места</string>
     <string name="hostel">Хостел</string>
-    <string name="minihotel">Мини-отель</string>
+    <string name="minihotel">Мини-отели</string>
+    <string name="bridge">Мосты</string>
+    <string name="park">Парки</string>
+    <string name="monument">Памятники</string>
 
 
 </resources>

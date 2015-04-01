@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.sbpmap.EtovidelAPI.EtovidelAPI;
 import com.sbpmap.Foursquare.FoursquareAPI;
 import com.sbpmap.Map.API;
 import com.sbpmap.Map.WebPlaceFinder;
@@ -46,13 +47,15 @@ public class SinglePlaceActivity extends Activity{
           if (venueId.contains(WebPlaceFinder.HOSTEL) || venueId.contains(WebPlaceFinder.HOTEL) || venueId.contains(WebPlaceFinder.MINI_HOTEL)) {
               setContentView(R.layout.single_place_hotel);
               api = new OstrovokAPI(getAssets());
-          }
-          else if (venueId.length() < 7) {
+          } else if (venueId.contains(WebPlaceFinder.MONUMENT) || venueId.contains(WebPlaceFinder.LANDMARK)
+                    || venueId.contains(WebPlaceFinder.BRIDGE) || venueId.contains(WebPlaceFinder.PARK)){
+              setContentView(R.layout.single_place_landmark);
+              api = new EtovidelAPI(getAssets());
+              alert.showAlertDialog(SinglePlaceActivity.this, "trtr",
+                      venueId, false);
+          } else  {
               setContentView(R.layout.single_place_restaurant);
               api = new RestoclubAPI(latLngBounds);
-          } else {
-              setContentView(R.layout.single_place);
-              api = new FoursquareAPI();
           }
           new LoadSinglePlaceDetails().execute(new APIRequest(api, api.getSinglePlaceRequest(venueId), venueId));
 	  }
@@ -74,7 +77,6 @@ public class SinglePlaceActivity extends Activity{
 	      protected String doInBackground(APIRequest... args) {
               api = args[0].api;
 	    	  response = api.getSinglePlace(args[0].query);
-
 			  return "";
 	      }
 	 

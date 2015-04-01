@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:fillViewport="true"
-        android:scrollbars = "vertical"
         android:id="@+id/scroll">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center"
             android:orientation="vertical">
             <!-- Name Label -->
             <TextView
@@ -23,9 +19,9 @@
 
             <!--  Name Value -->
             <TextView
-                android:id="@+id/hotel_name"
+                android:id="@+id/landmark_name"
                 android:layout_width="fill_parent"
-                android:layout_height="@dimen/extra_textview_height"/>
+                android:layout_height="@dimen/textview_height"/>
 
             <!-- stub string -->
 
@@ -37,21 +33,9 @@
 
             <!--  Adress Value -->
             <TextView
-                android:id="@+id/hotel_address"
+                android:id="@+id/landmark_address"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/extra_textview_height"/>
-
-            <!-- Cost Value -->
-            <TextView
-                android:text="@string/price_by_night"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/textview_height"/>
-
-            <!--  Cost Value -->
-            <TextView
-                android:id="@+id/hotel_price"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/textview_height"/>
 
             <!-- Definition Label -->
             <TextView
@@ -61,10 +45,9 @@
 
             <!--  Definition Value -->
             <TextView
-                android:id="@+id/hotel_definition"
+                android:id="@+id/landmark_definition"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
     </ScrollView>
-</LinearLayout>

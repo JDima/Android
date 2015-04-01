@@ -59,9 +59,7 @@ public class MainActivity extends Activity {
                         "latitude:" + gps.getLatitude() + ", longitude: " + gps.getLongitude(),
                         false);
             } else {
-                alert.showAlertDialog(MainActivity.this, "GPS Status",
-                        "Couldn't get location information. Please enable GPS",
-                        false);
+                gps.showSettingsAlert();
                 return;
             }
 
@@ -167,8 +165,17 @@ public class MainActivity extends Activity {
         	query = WebPlaceFinder.RESTAURANT;
             break;
 
-        case R.id.museum:
-        	query = WebPlaceFinder.MUSEUM;
+        case R.id.landmark:
+        	query = WebPlaceFinder.LANDMARK;
+            break;
+        case R.id.monument:
+            query = WebPlaceFinder.MONUMENT;
+            break;
+        case R.id.park:
+            query = WebPlaceFinder.PARK;
+            break;
+        case R.id.bridge:
+            query = WebPlaceFinder.BRIDGE;
             break;
         case R.id.minihotel:
             query = WebPlaceFinder.MINI_HOTEL;
@@ -181,7 +188,7 @@ public class MainActivity extends Activity {
             
         }
         else {
-        	fp.execute(59.9300, 30.3615, query, 1000);
+        	fp.execute(59.9300, 30.3615, query, 10000);
             item.setChecked(true);
         }
     	

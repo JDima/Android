@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.res.AssetManager;
 import android.os.AsyncTask;
 
+import com.sbpmap.EtovidelAPI.EtovidelAPI;
 import com.sbpmap.Foursquare.FoursquareAPI;
 import com.sbpmap.MainActivity;
 import com.sbpmap.Ostrovok.OstrovokAPI;
@@ -34,10 +35,14 @@ public class WebPlaceFinder {
     public static final String HOTEL = "Hotel";
     public static final String HOSTEL = "Hostel";
     public static final String MINI_HOTEL = "Mini-hotel";
-    public static final String MUSEUM = "Museum";
+    public static final String LANDMARK = "Landmark";
+    public static final String BRIDGE = "Bridge";
+    public static final String PARK = "Park";
+    public static final String MONUMENT = "Monument";
+
     public static final String RESTAURANT = "Restaurant";
 
-    public static final String[] VENUES = {RESTAURANT, HOTEL, MUSEUM, HOSTEL, MINI_HOTEL};
+    public static final String[] VENUES = {RESTAURANT, HOTEL, LANDMARK, HOSTEL, MINI_HOTEL, MONUMENT, BRIDGE, PARK};
 
     public WebPlaceFinder(GoogleMap googleMap, AssetManager assetManager) {
         for (String query : VENUES) {
@@ -48,7 +53,10 @@ public class WebPlaceFinder {
         imgMarkers.put(HOSTEL, R.drawable.hostel);
         imgMarkers.put(HOTEL, R.drawable.hotel);
         imgMarkers.put(RESTAURANT, R.drawable.restaurant);
-        imgMarkers.put(MUSEUM, R.drawable.museum);
+        imgMarkers.put(LANDMARK, R.drawable.museum);
+        imgMarkers.put(MONUMENT, R.drawable.monument);
+        imgMarkers.put(BRIDGE, R.drawable.bridge);
+        imgMarkers.put(PARK, R.drawable.park);
         imgMarkers.put(MINI_HOTEL, R.drawable.minihotel);
 
         this.assetManager = assetManager;
@@ -63,7 +71,7 @@ public class WebPlaceFinder {
           api = new OstrovokAPI(assetManager);
         }
         else {
-            api = new FoursquareAPI();
+            api = new EtovidelAPI(assetManager);
         }
 
         new PlaceFinder().execute(new APIRequest(api, api.getPlacesRequest(query, radius, lat, lng), query));

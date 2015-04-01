@@ -21,8 +21,8 @@
                     android:orderInCategory="100"
                     android:showAsAction="never"/>
  
-                <item android:id="@+id/museum"
-                    android:title="@string/museum"
+                <item android:id="@+id/landmark"
+                    android:title="@string/landmark"
                     android:orderInCategory="100"
                     android:showAsAction="never" />
                 
@@ -30,8 +30,24 @@
                     android:title="@string/hostel"
                     android:orderInCategory="100"
                     android:showAsAction="never" />
+
                 <item android:id="@+id/minihotel"
                     android:title="@string/minihotel"
+                    android:orderInCategory="100"
+                    android:showAsAction="never" />
+
+                <item android:id="@+id/monument"
+                    android:title="@string/monument"
+                    android:orderInCategory="100"
+                    android:showAsAction="never" />
+
+                <item android:id="@+id/bridge"
+                    android:title="@string/bridge"
+                    android:orderInCategory="100"
+                    android:showAsAction="never" />
+
+                <item android:id="@+id/park"
+                    android:title="@string/park"
                     android:orderInCategory="100"
                     android:showAsAction="never" />
             </group>
