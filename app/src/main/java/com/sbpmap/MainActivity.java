@@ -62,12 +62,8 @@ public class MainActivity extends Activity {
 
             googleMap = ((MapFragment) getFragmentManager().findFragmentById(
                     R.id.map)).getMap();
-            cd = new ConnectionDetector(getApplicationContext());
 
-            if (!cd.isConnectingToInternet()) {
-                alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                        "Please connect to working Internet connection", false);
-            }
+            cd = new ConnectionDetector(getApplicationContext());
 
             if (googleMap != null) {
 
@@ -92,8 +88,8 @@ public class MainActivity extends Activity {
                     public boolean onMarkerClick(Marker arg) {
                         if (!cd.isConnectingToInternet()) {
                             alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                                    "Please connect to working Internet connection", false);
-                            return false;
+                                    "Please connect to Internet!", false);
+                            return true;
                         }
                         Intent in = new Intent(getApplicationContext(), SinglePlaceActivity.class);
 
@@ -151,7 +147,7 @@ public class MainActivity extends Activity {
         isSearh = false;
     	if (!cd.isConnectingToInternet()) {
     		alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                    "Please connect to working Internet connection", false);
+                    "Please connect to Internet!", false);
             return true;
     	}
         switch(item.getItemId())
