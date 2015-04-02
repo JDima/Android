@@ -28,6 +28,7 @@ import android.widget.Toast;
 import java.sql.Connection;
 
 
+
 public class MainActivity extends Activity {
 	private GoogleMap googleMap;
     private boolean isSearh = false;
@@ -145,13 +146,14 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
     	String query = null;
         isSearh = false;
-    	if (!cd.isConnectingToInternet()) {
-    		alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                    "Please connect to Internet!", false);
-            return true;
-    	}
         switch(item.getItemId())
         {
+
+
+        case R.id.about:
+            Intent in = new Intent(getApplicationContext(), ActivityMain.class);
+            startActivity(in);
+            return true;
         case R.id.clean:
             fp.removeAll();
             for (int i = 0; i < WebPlaceFinder.VENUES.length; i++)
@@ -160,6 +162,11 @@ public class MainActivity extends Activity {
 
 
         case R.id.search_near:
+            if (!cd.isConnectingToInternet()) {
+                alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
+                        "Please connect to Internet!", false);
+                return true;
+            }
             if (gps.canGetLocation()) {
                 alert.showAlertDialog(MainActivity.this, "GPS Status",
                         "latitude:" + gps.getLatitude() + ", longitude: " + gps.getLongitude(),

@@ -26,6 +26,14 @@
     <string name="bridge">Brdiges</string>
     <string name="park">Parks</string>
     <string name="monument">Monuments</string>
+    <string name="about">About</string>
+
+    <string name="dummy_button">To Site</string>
+    <string name="dummy_content">Print text here</string>
+    <string name="str_depth">Applied Math Department</string>
+    <string name="str_university">St.Petersburg State Polytechnical University</string>
+    <string name="str_toweb">To site</string>
+
 
     <string name="google_maps_key">AIzaSyBUgwpFyFaoAQusQ_TdIQrwCctMrlJ5pdc</string>
 
