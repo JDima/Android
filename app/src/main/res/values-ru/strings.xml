@@ -5,6 +5,7 @@
     <string name="action_settings">Настройки</string>
     <string name="search">Поиск</string>
     <string name="clean">Очистить</string>
+    <string name="search_near">Поиск рядом</string>
 
     <string name="name">Название места:</string>
     <string name="address">Адрес:</string>
@@ -23,6 +24,5 @@
     <string name="bridge">Мосты</string>
     <string name="park">Парки</string>
     <string name="monument">Памятники</string>
-
 
 </resources>

@@ -59,6 +59,11 @@
     android:orderInCategory="100"
     android:showAsAction="never" />
 
+    <item android:id="@+id/search_near"
+        android:title="@string/search_near"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+
     <item android:id="@+id/clean"
         android:title="@string/clean"
         android:orderInCategory="100"

@@ -27,12 +27,21 @@ import java.util.Map;
  * Created by JDima on 22/03/15.
  */
 public class RestoclubAPI implements API {
-
+    private double lat;
+    private double lng;
     private static final String RESTOCLUB = "http://www.restoclub.ru/site/all/main/";
     private LatLngBounds latLngBounds;
 
 
+    public RestoclubAPI(LatLngBounds latLngBounds, double lat, double lng) {
+        this.lat = lat;
+        this.lng = lng;
+        this.latLngBounds = latLngBounds;
+    }
+
     public RestoclubAPI(LatLngBounds latLngBounds) {
+        this.lat = 0;
+        this.lng = 0;
         this.latLngBounds = latLngBounds;
     }
 
@@ -92,5 +101,15 @@ public class RestoclubAPI implements API {
     @Override
     public String getResponse(HttpUriRequest httpUriRequest) {
         return HttpRequest.SEND(httpUriRequest);
+    }
+
+    @Override
+    public double getLat() {
+        return lat;
+    }
+
+    @Override
+    public double getLng() {
+        return lng;
     }
 }

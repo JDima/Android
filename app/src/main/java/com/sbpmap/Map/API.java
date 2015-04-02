@@ -22,4 +22,8 @@ public interface API {
     String getSinglePlace(String query);
 
     String getResponse(HttpUriRequest httpUriRequest);
+
+    double getLat();
+
+    double getLng();
 }

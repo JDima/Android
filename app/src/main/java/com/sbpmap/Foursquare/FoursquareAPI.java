@@ -71,4 +71,14 @@ public class FoursquareAPI implements API {
     public String getResponse(HttpUriRequest httpUriRequest) {
         return HttpRequest.SEND(httpUriRequest);
     }
+
+    @Override
+    public double getLat() {
+        return 0;
+    }
+
+    @Override
+    public double getLng() {
+        return 0;
+    }
 }

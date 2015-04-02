@@ -31,6 +31,13 @@ public class EtovidelAPI implements API {
     private AssetManager assetManager;
 
     public EtovidelAPI(AssetManager assetManager) {
+
+        this.assetManager = assetManager;
+    }
+
+    public EtovidelAPI(AssetManager assetManager, double lat, double lng) {
+        this.lat = lat;
+        this.lng = lng;
         this.assetManager = assetManager;
     }
     @Override
@@ -94,5 +101,13 @@ public class EtovidelAPI implements API {
         return response;
     }
 
+    @Override
+    public double getLat() {
+        return lat;
+    }
 
+    @Override
+    public double getLng() {
+        return lng;
+    }
 }

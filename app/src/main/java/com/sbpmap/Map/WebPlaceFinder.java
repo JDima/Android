@@ -3,8 +3,12 @@ package com.sbpmap.Map;
 
 import android.app.Activity;
 import android.content.res.AssetManager;
+import android.location.Location;
 import android.os.AsyncTask;
+import android.view.SubMenu;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.sbpmap.EtovidelAPI.EtovidelAPI;
 import com.sbpmap.Foursquare.FoursquareAPI;
 import com.sbpmap.MainActivity;
@@ -19,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sbpmap.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,15 +68,24 @@ public class WebPlaceFinder {
         this.googleMap = googleMap;
     }
 
-    public void execute(double lat, double lng, String query, int radius) {
+    public void searchPlaces(double lat, double lng, SubMenu subMenu) {
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 15));
+        for (int id = 0; id < WebPlaceFinder.VENUES.length; id++) {
+            if (subMenu.getItem(id).isChecked()) {
+                execute(googleMap.getProjection().getVisibleRegion().latLngBounds, lat, lng, WebPlaceFinder.VENUES[id], 1000);
+            }
+        }
+    }
+
+    public void execute(LatLngBounds curLatLngBounds, double lat, double lng, String query, int radius) {
         API api;
         if (query.equals(RESTAURANT)) {
-            api = new RestoclubAPI(googleMap.getProjection().getVisibleRegion().latLngBounds);
+            api = new RestoclubAPI(curLatLngBounds, lat, lng);
         } else if(query.equals(HOSTEL) || query.equals(HOTEL) || query.equals(MINI_HOTEL)) {
-          api = new OstrovokAPI(assetManager);
+          api = new OstrovokAPI(assetManager, lat, lng);
         }
         else {
-            api = new EtovidelAPI(assetManager);
+            api = new EtovidelAPI(assetManager, lat, lng);
         }
 
         new PlaceFinder().execute(new APIRequest(api, api.getPlacesRequest(query, radius, lat, lng), query));
@@ -101,18 +115,30 @@ public class WebPlaceFinder {
             if (response != null) {
                 venues = api.parseResponse(response);
                 venuesList.get(query).addAll(venues);
-                addMarkersToMap(venues, query);
+                addMarkersToMap(venues, query, api.getLat(), api.getLng());
             }
         }
     }
 
-    private void addMarkersToMap(ArrayList<Place> venues, String query) {
+    private void addMarkersToMap(ArrayList<Place> venues, String query, double locLat, double locLng) {
+        float[] delta = new float[1];
+        float[] maxDelta = new float[1];
+
+        LatLng latLng = googleMap.getProjection().getVisibleRegion().latLngBounds.southwest;
+        Location.distanceBetween(latLng.latitude, latLng.longitude, locLat, locLng, maxDelta);
         if (venues != null) {
             for (Place fv : venues) {
                 MarkerOptions marker = new MarkerOptions().position(new LatLng(fv.getLat(), fv.getLng())).title(fv.getName());
+                Location.distanceBetween(locLat, locLng, fv.getLat(), fv.getLng(), delta);
 
                 marker.snippet(fv.getId());
                 marker.icon(BitmapDescriptorFactory.fromResource(imgMarkers.get(query)));
+
+                float alpha = delta[0] / maxDelta[0];
+                if (alpha > 1) {
+                    continue;
+                }
+                marker.alpha(1 - alpha);
 
                 googleMap.addMarker(marker);
 
@@ -120,14 +146,14 @@ public class WebPlaceFinder {
         }
     }
 
-    public void remove(String query) {
+    public void remove(String query, double lat, double lng) {
         googleMap.clear();
         venuesList.get(query).clear();
         for (PlaceFinder task : tasksList.get(query)) {
             task.cancel(true);
         }
         for (Map.Entry<String, ArrayList<Place>> entry : venuesList.entrySet()) {
-            addMarkersToMap(entry.getValue(), query);
+            addMarkersToMap(entry.getValue(), query,lat, lng);
         }
     }
 

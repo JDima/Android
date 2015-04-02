@@ -7,6 +7,7 @@
     <string name="clean">Clean</string>
     <string name="test">Test</string>
     <string name="title_activity_title_bar">TitleBar</string>
+    <string name="search_near">Search near</string>
 
     <string name="name">Name:</string>
     <string name="address">Address:</string>

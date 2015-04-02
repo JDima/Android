@@ -26,9 +26,18 @@ public class OstrovokAPI implements API {
     private static final String OSTROVOK_DB = "OstrovokDB/ostrovok.json";
     private AssetManager assetManager;
 
-    public OstrovokAPI(AssetManager assetManager) {
+    public OstrovokAPI(AssetManager assetManager, double lat, double lng) {
+        this.lat = lat;
+        this.lng = lng;
         this.assetManager = assetManager;
     }
+
+    public OstrovokAPI(AssetManager assetManager) {
+        this.lng = 0;
+        this.lat = 0;
+        this.assetManager = assetManager;
+    }
+
     @Override
     public HttpUriRequest getPlacesRequest(String query, int radius, double lat, double lng) {
         this.lat = lat;
@@ -90,5 +99,13 @@ public class OstrovokAPI implements API {
         return response;
     }
 
+    @Override
+    public double getLat() {
+        return lat;
+    }
 
+    @Override
+    public double getLng() {
+        return lng;
+    }
 }

@@ -1,5 +1,7 @@
 package com.sbpmap;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
@@ -15,12 +17,15 @@ import com.sbpmap.Utils.CustomWindowAdapter;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import java.sql.Connection;
 
 
 public class MainActivity extends Activity {
@@ -47,88 +52,83 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
-        googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-                R.id.map)).getMap();
-        cd = new ConnectionDetector(getApplicationContext());
 
-        if (!cd.isConnectingToInternet()) {
-            alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                    "Please connect to working Internet connection", false);
-        }
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
+        if (status != ConnectionResult.SUCCESS) {
+            int requestCode = 10;
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, requestCode);
+            dialog.show();
+        } else {
 
-        if (googleMap != null) {
+            googleMap = ((MapFragment) getFragmentManager().findFragmentById(
+                    R.id.map)).getMap();
+            cd = new ConnectionDetector(getApplicationContext());
 
-            googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                @Override
-                public void onMapLoaded() {
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(saintPetersburgBounds, 10));
-                }
-            });
-
-            fp = new WebPlaceFinder(googleMap, getAssets());
-        
-            gps = new GPSTracker(this);
-            if (gps.canGetLocation()) {
-                alert.showAlertDialog(MainActivity.this, "GPS Status",
-                        "latitude:" + gps.getLatitude() + ", longitude: " + gps.getLongitude(),
-                        false);
-            } else {
-                gps.showSettingsAlert();
-                return;
+            if (!cd.isConnectingToInternet()) {
+                alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
+                        "Please connect to working Internet connection", false);
             }
 
-            googleMap.setInfoWindowAdapter(new CustomWindowAdapter(getLayoutInflater()));
+            if (googleMap != null) {
 
-            googleMap.setMyLocationEnabled(true);
+                googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                    @Override
+                    public void onMapLoaded() {
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(saintPetersburgBounds, 10));
+                    }
+                });
 
-            googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+                fp = new WebPlaceFinder(googleMap, getAssets());
 
-                @Override
-                public boolean onMarkerClick(Marker arg) {
-                    if (!cd.isConnectingToInternet()) {
-                        alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                                "Please connect to working Internet connection", false);
+                gps = new GPSTracker(this);
+
+                googleMap.setInfoWindowAdapter(new CustomWindowAdapter(getLayoutInflater()));
+
+                googleMap.setMyLocationEnabled(true);
+
+                googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+
+                    @Override
+                    public boolean onMarkerClick(Marker arg) {
+                        if (!cd.isConnectingToInternet()) {
+                            alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
+                                    "Please connect to working Internet connection", false);
+                            return false;
+                        }
+                        Intent in = new Intent(getApplicationContext(), SinglePlaceActivity.class);
+
+                        LatLngBounds latLngBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
+                        in.putExtra(SinglePlaceActivity.BOUNDS_XL, latLngBounds.southwest.longitude);
+                        in.putExtra(SinglePlaceActivity.BOUNDS_XR, latLngBounds.northeast.longitude);
+                        in.putExtra(SinglePlaceActivity.BOUNDS_YL, latLngBounds.northeast.latitude);
+                        in.putExtra(SinglePlaceActivity.BOUNDS_YR, latLngBounds.southwest.latitude);
+                        in.putExtra(SinglePlaceActivity.VENUE_ID, arg.getSnippet());
+
+                        startActivity(in);
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(arg.getPosition()));
+                        //Toast.makeText(MainActivity.this, arg0.getSnippet(), 1000).show();
                         return false;
                     }
-                    Intent in = new Intent(getApplicationContext(), SinglePlaceActivity.class);
 
-                    LatLngBounds latLngBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
-                    in.putExtra(SinglePlaceActivity.BOUNDS_XL, latLngBounds.southwest.longitude);
-                    in.putExtra(SinglePlaceActivity.BOUNDS_XR, latLngBounds.northeast.longitude);
-                    in.putExtra(SinglePlaceActivity.BOUNDS_YL, latLngBounds.northeast.latitude);
-                    in.putExtra(SinglePlaceActivity.BOUNDS_YR, latLngBounds.southwest.latitude);
-                    in.putExtra(SinglePlaceActivity.VENUE_ID, arg.getSnippet());
+                });
+                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
-                    startActivity(in);
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(arg.getPosition()));
-                    //Toast.makeText(MainActivity.this, arg0.getSnippet(), 1000).show();
-                    return false;
-                }
-
-            });
-            googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
-                @Override
-                public void onMapClick(LatLng arg0) {
-                    if (isSearh) {
-                        isSearh = false;
-                        for (int id = 0; id < WebPlaceFinder.VENUES.length; id++) {
-                            if (menu.getItem(0).getSubMenu().getItem(id).isChecked()) {
-                                fp.execute(arg0.latitude, arg0.longitude, WebPlaceFinder.VENUES[id], 1000);
-                            }
+                    @Override
+                    public void onMapClick(LatLng arg0) {
+                        if (isSearh) {
+                            isSearh = false;
+                            fp.searchPlaces(arg0.latitude, arg0.longitude, menu.getItem(0).getSubMenu());
+                            /*Toast.makeText(MainActivity.this, "Current pos:"
+                                     + googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude + " --"
+                                    + googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.longitude + " --"
+                                    + googleMap.getProjection().getVisibleRegion().latLngBounds.southwest.latitude + " --"
+                                    + googleMap.getProjection().getVisibleRegion().latLngBounds.southwest.longitude, Toast.LENGTH_LONG).show(); */
                         }
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(arg0.latitude, arg0.longitude), 15));
-                        /*Toast.makeText(MainActivity.this, "Current pos:"
-                                 + googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude + " --"
-                                + googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.longitude + " --"
-                                + googleMap.getProjection().getVisibleRegion().latLngBounds.southwest.latitude + " --"
-                                + googleMap.getProjection().getVisibleRegion().latLngBounds.southwest.longitude, Toast.LENGTH_LONG).show(); */
                     }
-                }
-            });
+                });
 
-            googleMap.getUiSettings().setZoomControlsEnabled(true);
+                googleMap.getUiSettings().setZoomControlsEnabled(true);
+            }
         }
     }
  
@@ -160,6 +160,29 @@ public class MainActivity extends Activity {
             fp.removeAll();
             for (int i = 0; i < WebPlaceFinder.VENUES.length; i++)
                 menu.getItem(0).getSubMenu().getItem(i).setChecked(false);
+            return true;
+
+
+        case R.id.search_near:
+            if (gps.canGetLocation()) {
+                alert.showAlertDialog(MainActivity.this, "GPS Status",
+                        "latitude:" + gps.getLatitude() + ", longitude: " + gps.getLongitude(),
+                        false);
+            } else {
+                gps.showSettingsAlert();
+                return true;
+            }
+            if (gps.getLatitude() == 0) {
+                alert.showAlertDialog(MainActivity.this, "GPS Status",
+                        "GPS do not work correctly!",
+                        false);
+                return true;
+            }
+
+            fp.removeAll();
+            //double lat = 59.9300, lng = 30.3615;
+            double lat = gps.getLatitude(), lng = gps.getLongitude();
+            fp.searchPlaces(lat, lng, menu.getItem(0).getSubMenu());
             return true;
 
         case R.id.search:
@@ -200,12 +223,11 @@ public class MainActivity extends Activity {
         }
 
         if(item.isChecked()) {
-        	fp.remove(query);
+            LatLng latLng = googleMap.getCameraPosition().target;
+        	fp.remove(query, latLng.latitude, latLng.longitude);
             item.setChecked(false);
-            
         }
         else {
-        	fp.execute(59.9300, 30.3615, query, 10000);
             item.setChecked(true);
         }
     	
