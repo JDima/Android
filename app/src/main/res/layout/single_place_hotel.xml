@@ -1,70 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:scrollbars="vertical">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true"
-        android:scrollbars = "vertical"
-        android:id="@+id/scroll">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!-- Name Label -->
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/textview_height"
+            android:text="@string/name" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <!-- Name Label -->
-            <TextView
-                android:text="@string/name"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/textview_height"/>
+        <!--  Name Value -->
+        <TextView
+            android:id="@+id/hotel_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false" />
 
-            <!--  Name Value -->
-            <TextView
-                android:id="@+id/hotel_name"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/extra_textview_height"/>
+        <!-- Address Label -->
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/textview_height"
+            android:text="@string/address" />
 
-            <!-- stub string -->
+        <!--  Adress Value -->
+        <TextView
+            android:id="@+id/hotel_address"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false" />
 
-            <!-- Address Label -->
-            <TextView
-                android:text="@string/address"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/textview_height"/>
+        <!-- Cost Label -->
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/textview_height"
+            android:text="@string/price_by_night" />
 
-            <!--  Adress Value -->
-            <TextView
-                android:id="@+id/hotel_address"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/extra_textview_height"/>
+        <!--  Cost Value -->
+        <TextView
+            android:id="@+id/hotel_price"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false" />
 
-            <!-- Cost Value -->
-            <TextView
-                android:text="@string/price_by_night"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/textview_height"/>
+        <!-- Definition Label -->
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/textview_height"
+            android:text="@string/definition" />
 
-            <!--  Cost Value -->
-            <TextView
-                android:id="@+id/hotel_price"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/textview_height"/>
+        <!--  Definition Value -->
+        <TextView
+            android:id="@+id/hotel_definition"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false" />
+    </LinearLayout>
 
-            <!-- Definition Label -->
-            <TextView
-                android:text="@string/definition"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/textview_height"/>
-
-            <!--  Definition Value -->
-            <TextView
-                android:id="@+id/hotel_definition"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
-        </LinearLayout>
-
-    </ScrollView>
-</LinearLayout>
+</ScrollView>

@@ -10,7 +10,8 @@
  
         <menu>
             <group
-                android:checkableBehavior="all">
+                android:checkableBehavior="all"
+                android:choiceMode="multipleChoice" >
                 <item android:id="@+id/restaurant"
                     android:title="@string/restaurant"
                     android:orderInCategory="100"

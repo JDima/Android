@@ -1,53 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:fillViewport="true"
-        android:id="@+id/scroll">
+        android:layout_gravity="top|center"
+        android:orientation="vertical">
+        <!-- Name Label -->
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/textview_height"
+            android:text="@string/name" />
 
-        <LinearLayout
+        <!--  Name Value -->
+        <TextView
+            android:id="@+id/landmark_name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|center"
-            android:orientation="vertical">
-            <!-- Name Label -->
-            <TextView
-                android:text="@string/name"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/textview_height"/>
+            android:singleLine="false" />
 
-            <!--  Name Value -->
-            <TextView
-                android:id="@+id/landmark_name"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/textview_height"/>
+        <!-- stub string -->
 
-            <!-- stub string -->
+        <!-- Address Label -->
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/textview_height"
+            android:text="@string/address" />
 
-            <!-- Address Label -->
-            <TextView
-                android:text="@string/address"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/textview_height"/>
+        <!--  Adress Value -->
+        <TextView
+            android:id="@+id/landmark_address"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false" />
 
-            <!--  Adress Value -->
-            <TextView
-                android:id="@+id/landmark_address"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/extra_textview_height"/>
+        <!-- Definition Label -->
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/textview_height"
+            android:text="@string/definition" />
 
-            <!-- Definition Label -->
-            <TextView
-                android:text="@string/definition"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/textview_height"/>
+        <!--  Definition Value -->
+        <TextView
+            android:id="@+id/landmark_definition"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false" />
+    </LinearLayout>
 
-            <!--  Definition Value -->
-            <TextView
-                android:id="@+id/landmark_definition"
-                android:layout_width="fill_parent"
-                android:layout_height="2000dp"/>
-        </LinearLayout>
-
-    </ScrollView>
+</ScrollView>

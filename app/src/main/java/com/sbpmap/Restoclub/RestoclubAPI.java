@@ -1,5 +1,6 @@
 package com.sbpmap.Restoclub;
 
+import android.text.Html;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -8,6 +9,7 @@ import com.sbpmap.Map.Place;
 import com.sbpmap.R;
 import com.sbpmap.SinglePlaceActivity;
 import com.sbpmap.Utils.HttpRequest;
+import com.sbpmap.Utils.TextViewUtil;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -78,18 +80,16 @@ public class RestoclubAPI implements API {
     public void createSinglePage(SinglePlaceActivity singlePlaceActivity, String response) {
         Map<String, String> rip = RestoclubParser.parseSinglePlaceResponse(response);
         if (rip != null) {
-            TextView lbl_name = (TextView) singlePlaceActivity.findViewById(R.id.res_name);
-            TextView lbl_address = (TextView) singlePlaceActivity.findViewById(R.id.res_address);
-            TextView lbl_phone = (TextView) singlePlaceActivity.findViewById(R.id.res_phone);
-            TextView lbl_hours = (TextView) singlePlaceActivity.findViewById(R.id.res_hours);
-            TextView lbl_bill = (TextView) singlePlaceActivity.findViewById(R.id.res_bill);
-
-
-            lbl_name.setText(rip.get(RestoclubParser.names[0]));
-            lbl_phone.setText(rip.get(RestoclubParser.names[1]));
-            lbl_address.setText(rip.get(RestoclubParser.names[2]));
-            lbl_bill.setText(rip.get(RestoclubParser.names[3]));
-            lbl_hours.setText(rip.get(RestoclubParser.names[4]));
+            TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(R.id.res_name),
+                    Html.fromHtml(rip.get(RestoclubParser.names[0])));
+            TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(R.id.res_address),
+                    Html.fromHtml(rip.get(RestoclubParser.names[1])));
+            TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(R.id.res_phone),
+                    Html.fromHtml(rip.get(RestoclubParser.names[2])));
+            TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(R.id.res_bill),
+                    Html.fromHtml(rip.get(RestoclubParser.names[3])));
+            TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(R.id.res_hours),
+                    Html.fromHtml(rip.get(RestoclubParser.names[4])));
         }
     }
 

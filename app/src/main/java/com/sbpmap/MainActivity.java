@@ -59,6 +59,7 @@ public class MainActivity extends Activity {
             int requestCode = 10;
             Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, requestCode);
             dialog.show();
+            this.finish();
         } else {
 
             googleMap = ((MapFragment) getFragmentManager().findFragmentById(

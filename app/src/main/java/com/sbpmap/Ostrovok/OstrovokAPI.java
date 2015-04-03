@@ -2,18 +2,21 @@ package com.sbpmap.Ostrovok;
 
 import android.app.Activity;
 import android.content.res.AssetManager;
+import android.text.Html;
 import android.widget.TextView;
 
 import com.sbpmap.Map.API;
 import com.sbpmap.Map.Place;
 import com.sbpmap.R;
 import com.sbpmap.SinglePlaceActivity;
+import com.sbpmap.Utils.TextViewUtil;
 
 import org.apache.http.client.methods.HttpUriRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by JDima on 29/03/15.
@@ -61,17 +64,18 @@ public class OstrovokAPI implements API {
     public void createSinglePage(SinglePlaceActivity singlePlaceActivity, String response) {
         OstrovokInfoPlace oip = OstrovokParser.parseSinglePlaceResponse(response, id);
         if (oip != null) {
-            TextView lbl_name = (TextView) singlePlaceActivity.findViewById(R.id.hotel_name);
-            TextView lbl_address = (TextView) singlePlaceActivity.findViewById(R.id.hotel_address);
-            TextView lbl_definition = (TextView) singlePlaceActivity.findViewById(R.id.hotel_definition);
-            TextView lbl_price = (TextView) singlePlaceActivity.findViewById(R.id.hotel_price);
 
-
-            lbl_name.setText(oip.getName());
-            lbl_address.setText(oip.getAddress());
-            lbl_definition.setText(oip.getDefinition());
-            String price = oip.getCost() + " RUB";
-            lbl_price.setText(price);
+            TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(R.id.hotel_name), oip.getName());
+            TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(R.id.hotel_address), oip.getAddress());
+            TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(R.id.hotel_definition), oip.getDefinition());
+            String strLang = Locale.getDefault().getDisplayLanguage();
+            String price = oip.getCost() + " ";
+            if (strLang.equalsIgnoreCase("русский")){
+                price += "руб.";
+            } else {
+                price += "RUB";
+            }
+            TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(R.id.hotel_price), price);
         }
     }
 

@@ -11,6 +11,7 @@ import com.sbpmap.Ostrovok.OstrovokAPI;
 import com.sbpmap.R;
 import com.sbpmap.SinglePlaceActivity;
 import com.sbpmap.Utils.HttpRequest;
+import com.sbpmap.Utils.TextViewUtil;
 
 import org.apache.http.client.methods.HttpUriRequest;
 
@@ -25,13 +26,12 @@ public class EtovidelAPI implements API {
     private double lat;
     private double lng;
     private String query;
-    private String id;
+
     private static final String ETOVIDEL_DB = "EtovidelDB/etovidel.json";
     private static final String ETOVIDEL = "http://www.etovidel.net/sights/city/saint-petersburg/id/";
     private AssetManager assetManager;
 
     public EtovidelAPI(AssetManager assetManager) {
-
         this.assetManager = assetManager;
     }
 
@@ -61,15 +61,11 @@ public class EtovidelAPI implements API {
 
     @Override
     public void createSinglePage(SinglePlaceActivity singlePlaceActivity, String response) {
-        EtovidelInfoPlace oip = EtovidelParser.parseSinglePlaceResponse(response);
-        if (oip != null) {
-            TextView lbl_name = (TextView) singlePlaceActivity.findViewById(R.id.landmark_name);
-            TextView lbl_address = (TextView) singlePlaceActivity.findViewById(R.id.landmark_address);
-            TextView lbl_definition = (TextView) singlePlaceActivity.findViewById(R.id.landmark_definition);
-
-            lbl_name.setText(oip.getName());
-            lbl_address.setText(oip.getAddress());
-            lbl_definition.setText(Html.fromHtml(oip.getDefinition()));
+        EtovidelInfoPlace eip = EtovidelParser.parseSinglePlaceResponse(response);
+        if (eip != null) {
+            TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(R.id.landmark_name), Html.fromHtml(eip.getName()));
+            TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(R.id.landmark_address), Html.fromHtml(eip.getAddress()));
+            TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(R.id.landmark_definition), Html.fromHtml(eip.getDefinition()));
         }
     }
 

@@ -50,7 +50,7 @@ public class EtovidelParser {
     public static EtovidelInfoPlace parseSinglePlaceResponse(String response) {
         EtovidelInfoPlace oip = new EtovidelInfoPlace();
         response = response.substring(response.indexOf(borders[0]) + borders[0].length());
-        oip.setName(response.substring(0, response.indexOf(",")));
+        oip.setName(response.substring(0, Math.min(response.indexOf(","), response.indexOf("("))));
 
         response = response.substring(response.indexOf(borders[2]) + borders[2].length());
         response = response.substring(response.indexOf(borders[3]) + borders[3].length());
