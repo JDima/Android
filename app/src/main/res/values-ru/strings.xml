@@ -14,6 +14,7 @@
     <string name="bill">Средний счёт:</string>
     <string name="price_by_night">Цена за ночь:</string>
     <string name="definition">Описание:</string>
+    <string name="price_include">В цену включено:</string>
 
     <string name="restaurant">Рестораны</string>
     <string name="hotel">Отели</string>
@@ -26,11 +27,20 @@
     <string name="monument">Памятники</string>
     <string name="about">Описание</string>
 
-    <string name="dummy_button">To Site</string>
-    <string name="dummy_content">Print text here</string>
+    <string name="dummy_button">На сайт</string>
+    <string name="dummy_content">Введите текст здесь</string>
     <string name="str_depth">Кафедра Прикладной Математики</string>
     <string name="str_university">Санкт-Петербургский Государственный Политехнический Университет</string>
     <string name="str_toweb">На сайт</string>
 
+    <string name="has_fitness">Фитнес</string>
+    <string name="has_meal">Ужин</string>
+    <string name="has_internet">Интернет</string>
+    <string name="has_airport_transfer">Трансфер в аэропорт</string>
+    <string name="has_breakfast">Завтрак</string>
+    <string name="has_spa">Спа</string>
+    <string name="has_parking">Парковка</string>
+    <string name="has_pool">Бассейн</string>
+    <string name="has_bathroom">Душ</string>
 
 </resources>

@@ -65,6 +65,20 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:singleLine="false" />
+
+        <!-- Price include Label -->
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/textview_height"
+            android:text="@string/price_include" />
+
+        <!--  Price include Value -->
+        <TextView
+            android:id="@+id/price_include"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="false" />
     </LinearLayout>
 
 </ScrollView>

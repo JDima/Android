@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 /**
  * Created by JDima on 29/03/15.
@@ -36,6 +38,23 @@ public class OstrovokParser {
         return temp;
     }
 
+    private static LinkedHashSet<String> getFilters(JSONObject obj, String filter) {
+        LinkedHashSet<String> filters = new LinkedHashSet<>();
+        try {
+            if (obj.has(filter)) {
+                String serp_filters = obj.getString(filter);
+                while(serp_filters.contains("'")) {
+                    serp_filters = serp_filters.substring(serp_filters.indexOf("'") + 1);
+                    filters.add(serp_filters.substring(0, serp_filters.indexOf("'")));
+                    serp_filters = serp_filters.substring(serp_filters.indexOf("'") + 1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return filters;
+    }
+
     public static OstrovokInfoPlace parseSinglePlaceResponse(String response, String id) {
         OstrovokInfoPlace oip = new OstrovokInfoPlace();
         try {
@@ -45,8 +64,13 @@ public class OstrovokParser {
                 if (id.contains(jsonArray.getJSONObject(i).getString("id"))) {
                     oip.setName(jsonArray.getJSONObject(i).getString("name"));
                     oip.setAddress(jsonArray.getJSONObject(i).getString("address"));
-                    oip.setCost(jsonArray.getJSONObject(i).getDouble("price"));
+                    oip.setCost(jsonArray.getJSONObject(i).getString("price"));
                     oip.setDefinition(jsonArray.getJSONObject(i).getString("room_name"));
+
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    oip.addAdds(getFilters(obj,"serp_filters1"));
+                    oip.addAdds(getFilters(obj,"serp_filters2"));
+
                     return oip;
                 }
             }

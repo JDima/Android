@@ -16,6 +16,7 @@
     <string name="bill">Bill:</string>
     <string name="price_by_night">Price by night:</string>
     <string name="definition">Definition:</string>
+    <string name="price_include">Price includes:</string>
 
     <string name="restaurant">Restaurants</string>
     <string name="hotel">Hotels</string>
@@ -33,6 +34,17 @@
     <string name="str_depth">Applied Math Department</string>
     <string name="str_university">St.Petersburg State Polytechnical University</string>
     <string name="str_toweb">To site</string>
+
+
+    <string name="has_fitness">Fitness</string>
+    <string name="has_meal">Evenin meal</string>
+    <string name="has_internet">Internet</string>
+    <string name="has_airport_transfer">Transfer to airport</string>
+    <string name="has_breakfast">Breakfast</string>
+    <string name="has_spa">Spa</string>
+    <string name="has_parking">Parking</string>
+    <string name="has_pool">Pool</string>
+    <string name="has_bathroom">Bathroom</string>
 
 
     <string name="google_maps_key">AIzaSyBUgwpFyFaoAQusQ_TdIQrwCctMrlJ5pdc</string>

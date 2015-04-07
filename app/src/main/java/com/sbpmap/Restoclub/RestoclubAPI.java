@@ -4,6 +4,7 @@ import android.text.Html;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.sbpmap.MainActivity;
 import com.sbpmap.Map.API;
 import com.sbpmap.Map.Place;
 import com.sbpmap.R;
@@ -79,6 +80,9 @@ public class RestoclubAPI implements API {
     @Override
     public void createSinglePage(SinglePlaceActivity singlePlaceActivity, String response) {
         Map<String, String> rip = RestoclubParser.parseSinglePlaceResponse(response);
+        if (MainActivity.isEnglish){
+            RestoclubParser.names[3] = RestoclubParser.names[3].replace("руб.", "RUB");
+        }
         if (rip != null) {
             TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(R.id.res_name),
                     Html.fromHtml(rip.get(RestoclubParser.names[0])));

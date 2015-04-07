@@ -2,6 +2,7 @@ package com.sbpmap;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
@@ -20,26 +21,31 @@ import android.app.ActivityManager;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.widget.Toast;
 
 import java.sql.Connection;
-
+import java.util.Locale;
 
 
 public class MainActivity extends Activity {
 	private GoogleMap googleMap;
     private boolean isSearh = false;
     private Menu menu;
+    public static boolean isEnglish = true;
     private static final LatLngBounds saintPetersburgBounds = new LatLngBounds(
                                                     new LatLng(59.71584, 30.09941),
                                                     new LatLng(60.09037, 30.61897));
 
+    private LatLng cameraPos = new LatLng(0,0);
+
+
     ConnectionDetector cd;
     AlertDialogManager alert = new AlertDialogManager();
-    public static String KEY_REFERENCE = "reference";
     GPSTracker gps;
     WebPlaceFinder fp;
     
@@ -53,6 +59,13 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Toast.makeText(MainActivity.this, "AGAIN", Toast.LENGTH_LONG).show();
+
+        String strLang = Locale.getDefault().getDisplayLanguage();
+        if (strLang.equalsIgnoreCase("русский")){
+            isEnglish = false;
+        }
 
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
         if (status != ConnectionResult.SUCCESS) {
@@ -68,7 +81,6 @@ public class MainActivity extends Activity {
             cd = new ConnectionDetector(getApplicationContext());
 
             if (googleMap != null) {
-
                 googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                     @Override
                     public void onMapLoaded() {
@@ -103,7 +115,6 @@ public class MainActivity extends Activity {
                         in.putExtra(SinglePlaceActivity.VENUE_ID, arg.getSnippet());
 
                         startActivity(in);
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(arg.getPosition()));
                         //Toast.makeText(MainActivity.this, arg0.getSnippet(), 1000).show();
                         return false;
                     }
@@ -115,12 +126,7 @@ public class MainActivity extends Activity {
                     public void onMapClick(LatLng arg0) {
                         if (isSearh) {
                             isSearh = false;
-                            fp.searchPlaces(arg0.latitude, arg0.longitude, menu.getItem(0).getSubMenu());
-                            /*Toast.makeText(MainActivity.this, "Current pos:"
-                                     + googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude + " --"
-                                    + googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.longitude + " --"
-                                    + googleMap.getProjection().getVisibleRegion().latLngBounds.southwest.latitude + " --"
-                                    + googleMap.getProjection().getVisibleRegion().latLngBounds.southwest.longitude, Toast.LENGTH_LONG).show(); */
+                            searchPlaces(arg0.latitude, arg0.longitude, menu.getItem(0).getSubMenu());
                         }
                     }
                 });
@@ -129,8 +135,8 @@ public class MainActivity extends Activity {
             }
         }
     }
- 
- 
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -142,6 +148,15 @@ public class MainActivity extends Activity {
       this.menu = menu;
       return true;
     }
+
+    public void searchPlaces(double lat, double lng, SubMenu subMenu) {
+        boolean result = fp.searchPlaces(lat, lng, subMenu);
+        cameraPos = new LatLng(lat, lng);
+        if (!result) {
+            String msg = isEnglish ? "Nothing found." : "Ничего не найдено.";
+            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
+        }
+    }
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -149,8 +164,6 @@ public class MainActivity extends Activity {
         isSearh = false;
         switch(item.getItemId())
         {
-
-
         case R.id.about:
             Intent in = new Intent(getApplicationContext(), ActivityMain.class);
             startActivity(in);
@@ -169,24 +182,24 @@ public class MainActivity extends Activity {
                 return true;
             }
             if (gps.canGetLocation()) {
-                alert.showAlertDialog(MainActivity.this, "GPS Status",
+               /* alert.showAlertDialog(MainActivity.this, "GPS Status",
                         "latitude:" + gps.getLatitude() + ", longitude: " + gps.getLongitude(),
-                        false);
+                        false);*/
             } else {
                 gps.showSettingsAlert();
                 return true;
             }
-            if (gps.getLatitude() == 0) {
+            /*if (gps.getLatitude() == 0) {
                 alert.showAlertDialog(MainActivity.this, "GPS Status",
                         "GPS do not work correctly!",
                         false);
                 return true;
-            }
+            }*/
 
             fp.removeAll();
             //double lat = 59.9300, lng = 30.3615;
             double lat = gps.getLatitude(), lng = gps.getLongitude();
-            fp.searchPlaces(lat, lng, menu.getItem(0).getSubMenu());
+            searchPlaces(lat, lng, menu.getItem(0).getSubMenu());
             return true;
 
         case R.id.search:
@@ -236,5 +249,38 @@ public class MainActivity extends Activity {
         }
     	
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putDouble("lat", cameraPos.latitude);
+        outState.putDouble("lng", cameraPos.longitude);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        cameraPos = new LatLng(savedInstanceState.getDouble("lat"), savedInstanceState.getDouble("lng"));
+        //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(cameraPos.latitude, cameraPos.longitude), 15));
+
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        int orientation = newConfig.orientation;
+
+        switch (orientation) {
+            case Configuration.ORIENTATION_LANDSCAPE:
+                // do what you want when user is in LANDSCAPE
+                break;
+
+            case Configuration.ORIENTATION_PORTRAIT:
+                // do what you want when user is in PORTRAIT
+                break;
+        }
+
     }
 }

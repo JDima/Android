@@ -1,7 +1,7 @@
 package com.sbpmap.Map;
 
 
-import android.app.Activity;
+
 import android.content.res.AssetManager;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -10,20 +10,16 @@ import android.view.SubMenu;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.sbpmap.EtovidelAPI.EtovidelAPI;
-import com.sbpmap.Foursquare.FoursquareAPI;
-import com.sbpmap.MainActivity;
+
 import com.sbpmap.Ostrovok.OstrovokAPI;
 import com.sbpmap.Restoclub.RestoclubAPI;
 import com.sbpmap.Utils.APIRequest;
-import com.sbpmap.Utils.AlertDialogManager;
-import com.sbpmap.Utils.HttpRequest;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sbpmap.R;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +31,6 @@ public class WebPlaceFinder {
 
     private GoogleMap googleMap;
     private AssetManager assetManager;
-    AlertDialogManager alert = new AlertDialogManager();
 
     public static final String HOTEL = "Hotel";
     public static final String HOSTEL = "Hostel";
@@ -44,7 +39,6 @@ public class WebPlaceFinder {
     public static final String BRIDGE = "Bridge";
     public static final String PARK = "Park";
     public static final String MONUMENT = "Monument";
-
     public static final String RESTAURANT = "Restaurant";
 
     public static final String[] VENUES = {RESTAURANT, HOTEL, LANDMARK, HOSTEL, MINI_HOTEL, MONUMENT, BRIDGE, PARK};
@@ -68,13 +62,19 @@ public class WebPlaceFinder {
         this.googleMap = googleMap;
     }
 
-    public void searchPlaces(double lat, double lng, SubMenu subMenu) {
+    public boolean searchPlaces(double lat, double lng, SubMenu subMenu) {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 15));
         for (int id = 0; id < WebPlaceFinder.VENUES.length; id++) {
             if (subMenu.getItem(id).isChecked()) {
                 execute(googleMap.getProjection().getVisibleRegion().latLngBounds, lat, lng, WebPlaceFinder.VENUES[id], 1000);
             }
         }
+        /*for (String query : VENUES) {
+            if (!venuesList.get(query).isEmpty()) {
+                return true;
+            }
+        }*/
+        return true;
     }
 
     public void execute(LatLngBounds curLatLngBounds, double lat, double lng, String query, int radius) {
