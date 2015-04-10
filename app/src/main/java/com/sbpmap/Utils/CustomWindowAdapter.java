@@ -4,14 +4,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.Marker;
+
 import com.sbpmap.R;
 
 /**
  * Created by JDima on 02/04/15.
  */
-public class CustomWindowAdapter implements GoogleMap.InfoWindowAdapter {
+/*public class CustomWindowAdapter implements GoogleMap.InfoWindowAdapter {
     LayoutInflater mInflater;
 
     public CustomWindowAdapter(LayoutInflater i){
@@ -31,4 +30,4 @@ public class CustomWindowAdapter implements GoogleMap.InfoWindowAdapter {
     public View getInfoWindow(Marker marker) {
         return null;
     }
-}
+}*/

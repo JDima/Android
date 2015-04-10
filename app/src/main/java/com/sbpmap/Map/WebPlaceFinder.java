@@ -5,31 +5,40 @@ package com.sbpmap.Map;
 import android.content.res.AssetManager;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.SubMenu;
+import android.webkit.WebView;
+import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.sbpmap.EtovidelAPI.EtovidelAPI;
 
+import com.sbpmap.MainActivity;
 import com.sbpmap.Ostrovok.OstrovokAPI;
 import com.sbpmap.Restoclub.RestoclubAPI;
 import com.sbpmap.Utils.APIRequest;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.sbpmap.R;
+import com.sbpmap.Utils.LatLngBounds;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class WebPlaceFinder {
+
+    public static class JavaScriptExtensions
+    {
+        public void doThis(String lat, String lng)
+        {
+            Log.d( "Cur pos:" + lat + " and " + lng, "HI!");
+            //webView.loadUrl("javascript:loadData()");
+        }
+    }
+
     Map<String, ArrayList<Place>> venuesList = new HashMap<>();
     Map<String, ArrayList<PlaceFinder>> tasksList = new HashMap<>();
-    Map<String, Integer> imgMarkers = new HashMap<>();
+    Map<String, String> imgMarkers = new HashMap<>();
 
-    private GoogleMap googleMap;
+    private static WebView webView;
     private AssetManager assetManager;
 
     public static final String HOTEL = "Hotel";
@@ -43,42 +52,37 @@ public class WebPlaceFinder {
 
     public static final String[] VENUES = {RESTAURANT, HOTEL, LANDMARK, HOSTEL, MINI_HOTEL, MONUMENT, BRIDGE, PARK};
 
-    public WebPlaceFinder(GoogleMap googleMap, AssetManager assetManager) {
+    public WebPlaceFinder(WebView webView, AssetManager assetManager) {
         for (String query : VENUES) {
             venuesList.put(query, new ArrayList<Place>());
             tasksList.put(query, new ArrayList<PlaceFinder>());
         }
 
-        imgMarkers.put(HOSTEL, R.drawable.hostel);
-        imgMarkers.put(HOTEL, R.drawable.hotel);
-        imgMarkers.put(RESTAURANT, R.drawable.restaurant);
-        imgMarkers.put(LANDMARK, R.drawable.museum);
-        imgMarkers.put(MONUMENT, R.drawable.monument);
-        imgMarkers.put(BRIDGE, R.drawable.bridge);
-        imgMarkers.put(PARK, R.drawable.park);
-        imgMarkers.put(MINI_HOTEL, R.drawable.minihotel);
+        imgMarkers.put(HOSTEL, "hostel.png");
+        imgMarkers.put(HOTEL, "hotel.png");
+        imgMarkers.put(RESTAURANT, "restaurant.png");
+        imgMarkers.put(LANDMARK, "landmark.png");
+        imgMarkers.put(MONUMENT, "monument.png");
+        imgMarkers.put(BRIDGE, "bridge.png");
+        imgMarkers.put(PARK, "park.png");
+        imgMarkers.put(MINI_HOTEL, "minihotel.png");
 
         this.assetManager = assetManager;
-        this.googleMap = googleMap;
+        this.webView = webView;
     }
 
-    public boolean searchPlaces(double lat, double lng, SubMenu subMenu) {
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 15));
+    public boolean searchPlaces(double lat, double lng, SubMenu subMenu, LatLngBounds curLatLngBounds) {
         for (int id = 0; id < WebPlaceFinder.VENUES.length; id++) {
             if (subMenu.getItem(id).isChecked()) {
-                execute(googleMap.getProjection().getVisibleRegion().latLngBounds, lat, lng, WebPlaceFinder.VENUES[id], 1000);
+                execute(curLatLngBounds, lat, lng, WebPlaceFinder.VENUES[id], 1000);
             }
         }
-        /*for (String query : VENUES) {
-            if (!venuesList.get(query).isEmpty()) {
-                return true;
-            }
-        }*/
         return true;
     }
 
     public void execute(LatLngBounds curLatLngBounds, double lat, double lng, String query, int radius) {
         API api;
+        Log.d("Java log", "Query: " + query);
         if (query.equals(RESTAURANT)) {
             api = new RestoclubAPI(curLatLngBounds, lat, lng);
         } else if(query.equals(HOSTEL) || query.equals(HOTEL) || query.equals(MINI_HOTEL)) {
@@ -124,11 +128,15 @@ public class WebPlaceFinder {
         float[] delta = new float[1];
         float[] maxDelta = new float[1];
 
-        LatLng latLng = googleMap.getProjection().getVisibleRegion().latLngBounds.southwest;
-        Location.distanceBetween(latLng.latitude, latLng.longitude, locLat, locLng, maxDelta);
+        //LatLng latLng = googleMap.getProjection().getVisibleRegion().latLngBounds.southwest;
+        //Location.distanceBetween(latLng.latitude, latLng.longitude, locLat, locLng, maxDelta);
         if (venues != null) {
             for (Place fv : venues) {
-                MarkerOptions marker = new MarkerOptions().position(new LatLng(fv.getLat(), fv.getLng())).title(fv.getName());
+                webView.loadUrl("javascript:addMarker('" + fv.getLat() +
+                                                   "','" + fv.getLng() +
+                                                   "','" + fv.getId()  +
+                                                   "','" + imgMarkers.get(query) + "')");
+                /*MarkerOptions marker = new MarkerOptions().position(new LatLng(fv.getLat(), fv.getLng())).title(fv.getName());
                 Location.distanceBetween(locLat, locLng, fv.getLat(), fv.getLng(), delta);
 
                 marker.snippet(fv.getId());
@@ -140,25 +148,25 @@ public class WebPlaceFinder {
                 }
                 marker.alpha(1 - alpha);
 
-                googleMap.addMarker(marker);
+                googleMap.addMarker(marker);*/
 
             }
         }
     }
 
-    public void remove(String query, double lat, double lng) {
-        googleMap.clear();
+    public void remove(String query) {
+        webView.loadUrl("javascript:clear()");
         venuesList.get(query).clear();
         for (PlaceFinder task : tasksList.get(query)) {
             task.cancel(true);
         }
         for (Map.Entry<String, ArrayList<Place>> entry : venuesList.entrySet()) {
-            addMarkersToMap(entry.getValue(), query,lat, lng);
+            addMarkersToMap(entry.getValue(), query, 0, 0);
         }
     }
 
     public void removeAll() {
-        googleMap.clear();
+        webView.loadUrl("javascript:clear()");
         for (Map.Entry<String, ArrayList<PlaceFinder> >  entry : tasksList.entrySet()) {
             ArrayList<PlaceFinder> placeFinders = entry.getValue();
             if (placeFinders != null) {

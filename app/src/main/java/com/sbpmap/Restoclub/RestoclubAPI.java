@@ -3,13 +3,13 @@ package com.sbpmap.Restoclub;
 import android.text.Html;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.sbpmap.MainActivity;
 import com.sbpmap.Map.API;
 import com.sbpmap.Map.Place;
 import com.sbpmap.R;
 import com.sbpmap.SinglePlaceActivity;
 import com.sbpmap.Utils.HttpRequest;
+import com.sbpmap.Utils.LatLngBounds;
 import com.sbpmap.Utils.TextViewUtil;
 
 import org.apache.http.NameValuePair;
@@ -54,10 +54,10 @@ public class RestoclubAPI implements API {
 
         try {
             List<NameValuePair> params = new ArrayList<>(1);
-            params.add(new BasicNameValuePair("xl", String.valueOf(latLngBounds.southwest.longitude)));
-            params.add(new BasicNameValuePair("xr", String.valueOf(latLngBounds.northeast.longitude)));
-            params.add(new BasicNameValuePair("yl", String.valueOf(latLngBounds.northeast.latitude)));
-            params.add(new BasicNameValuePair("yr", String.valueOf(latLngBounds.southwest.latitude)));
+            params.add(new BasicNameValuePair("xl", String.valueOf(latLngBounds.getSouthlongitude())));
+            params.add(new BasicNameValuePair("xr", String.valueOf(latLngBounds.getNorthlongitude())));
+            params.add(new BasicNameValuePair("yl", String.valueOf(latLngBounds.getNorthlatitude())));
+            params.add(new BasicNameValuePair("yr", String.valueOf(latLngBounds.getSouthlatitude())));
             params.add(new BasicNameValuePair("cur_user", "0"));
             httppost.setEntity(new UrlEncodedFormEntity(params));
         } catch (Exception e) {

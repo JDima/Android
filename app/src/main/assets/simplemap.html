@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+        html, body, #map-canvas {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+
+    <script>
+        var markers = [];
+        var map;
+        var marker;
+        var defLatLng = new google.maps.LatLng(59.92209, 30.32919);
+
+        function initialize() {
+            console.log("Start: initialize()");
+
+            var latitude = 0;
+            var longitude = 0;
+            if (window.android){
+                latitude = window.android.getLatitude();
+                longitude = window.android.getLongitude();
+            }
+            var myLatlng = new google.maps.LatLng(latitude,longitude);
+
+            var mapOptions = {
+                zoom: 10,
+                center: defLatLng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+            google.maps.event.addListener(map, 'click', function(event) {
+                var search = ac.search();
+                console.log("mapClicked");
+                if (search) {
+                    var lat = event.latLng.lat();
+                    var lng = event.latLng.lng();
+
+                    var pt = new google.maps.LatLng(lat, lng);
+                    map.setCenter(pt);
+                    map.setZoom(15);
+
+                    var bounds = map.getBounds();
+                    var s = bounds.getSouthWest();
+                    var n = bounds.getNorthEast();
+
+
+                    console.log("mapClicked");
+                    ac.searchPlaces(lat, lng, s.lat(), s.lng(), n.lat(), n.lng());
+                }
+            });
+
+            console.log("End: initialize()");
+        }
+
+        function addMarker(lat, lng, id, icon_name) {
+            console.log("addMarker(" + lat + ", " + lng + ")");
+
+            var location = new google.maps.LatLng(lat, lng);
+            var icon = "file:///android_asset/" + icon_name;
+            var image = {
+                url: icon,
+                fillOpacity: 0.9
+            }
+            marker = new google.maps.Marker({
+                position: location,
+                icon: image,
+                map: map,
+                title: "Hello World!",
+                id: id
+            });
+
+            google.maps.event.addListener(marker, 'click', function(event) {
+                console.log("It is marker: " + marker.id );
+                var bounds = map.getBounds();
+                var s = bounds.getSouthWest();
+                var n = bounds.getNorthEast();
+
+                ac.startSinglePlaceActivity(marker.id, s.lat(), s.lng(), n.lat(), n.lng());
+            });
+
+            markers.push(marker);
+        }
+
+        function setAllMap(map) {
+            console.log("setAllMap()");
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(map);
+            }
+        }
+
+        function searchNear(lat, lng) {
+            console.log("Search near: " + lat + " , " + lng);
+
+            var pt = new google.maps.LatLng(lat, lng);
+            map.setCenter(pt);
+            map.setZoom(15);
+
+            var bounds = map.getBounds();
+            var s = bounds.getSouthWest();
+            var n = bounds.getNorthEast();
+
+
+            console.log("Search near");
+            ac.searchPlaces(lat, lng, s.lat(), s.lng(), n.lat(), n.lng());
+        }
+
+        function clear() {
+            console.log("clear()");
+            setAllMap(null);
+            markers = [];
+        }
+
+        $(document).on('click', '.add-markers', function(e) {
+            e.preventDefault();
+        });
+
+    </script>
+</head>
+<body onload="initialize();">
+<div id="map-canvas"></div>
+</body>
+</html>

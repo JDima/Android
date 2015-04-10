@@ -1,139 +1,126 @@
 package com.sbpmap;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.sbpmap.Map.WebPlaceFinder;
 import com.sbpmap.Utils.AlertDialogManager;
 import com.sbpmap.Utils.ConnectionDetector;
 import com.sbpmap.Utils.GPSTracker;
-import com.sbpmap.Utils.CustomWindowAdapter;
+import com.sbpmap.Utils.LatLngBounds;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-import java.sql.Connection;
 import java.util.Locale;
 
 
 public class MainActivity extends Activity {
-	private GoogleMap googleMap;
+
+    class MainActivityJS
+    {
+        public void startSinglePlaceActivity(String id, double slat, double slng, double nlat, double nlng)
+        {
+            if (!cd.isConnectingToInternet()) {
+                alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
+                    "Please connect to Internet!", false);
+            }
+            Log.d("Java log", "Marker: " + id + "Coordinates:" + slat + "\n" + slng + "\n" + nlat + "\n" + nlng + "\n");
+            Intent in = new Intent(getApplicationContext(), SinglePlaceActivity.class);
+
+            in.putExtra(SinglePlaceActivity.BOUNDS_XL, slng);
+            in.putExtra(SinglePlaceActivity.BOUNDS_XR, nlng);
+            in.putExtra(SinglePlaceActivity.BOUNDS_YL, nlat);
+            in.putExtra(SinglePlaceActivity.BOUNDS_YR, slat);
+            in.putExtra(SinglePlaceActivity.VENUE_ID, id);
+
+            startActivity(in);
+        }
+
+        public boolean search() {
+            if (isSearh) {
+                isSearh = false;
+                return true;
+            }
+            return false;
+        }
+
+        public void searchPlaces(double lat, double lng, double slat, double slng, double nlat, double nlng) {
+            boolean result = fp.searchPlaces(lat, lng, menu.getItem(0).getSubMenu(), new LatLngBounds(slat, slng, nlat, nlng));
+
+            if (!result) {
+                String msg = isEnglish ? "Nothing found." : "Ничего не найдено.";
+                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    WebView myWebView;
     private boolean isSearh = false;
     private Menu menu;
     public static boolean isEnglish = true;
-    private static final LatLngBounds saintPetersburgBounds = new LatLngBounds(
-                                                    new LatLng(59.71584, 30.09941),
-                                                    new LatLng(60.09037, 30.61897));
 
-    private LatLng cameraPos = new LatLng(0,0);
-
+    private static final String MAP_URL = "file:///android_asset/simplemap.html";
 
     ConnectionDetector cd;
     AlertDialogManager alert = new AlertDialogManager();
     GPSTracker gps;
     WebPlaceFinder fp;
     
-    public boolean detectOpenGLES20() {
-        ActivityManager am = (ActivityManager) getSystemService(MainActivity.ACTIVITY_SERVICE);
-        ConfigurationInfo info = am.getDeviceConfigurationInfo();
-        return (info.reqGlEsVersion >= 0x20000);
-    }
-    
+    @SuppressLint("JavascriptInterface")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Toast.makeText(MainActivity.this, "AGAIN", Toast.LENGTH_LONG).show();
+        myWebView = (WebView)findViewById(R.id.mapview);
+        myWebView.getSettings().setJavaScriptEnabled(true);
+
+
+
+        myWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+            }
+        });
+
+        myWebView.setWebChromeClient(new WebChromeClient() {
+            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                Log.d("JavaScript log", consoleMessage.message() + " — From line "
+                        + consoleMessage.lineNumber() + " of "
+                        + consoleMessage.sourceId());
+
+                return true;
+            }
+        });
+
+        myWebView.loadUrl(MAP_URL);
+        myWebView.addJavascriptInterface(new WebPlaceFinder.JavaScriptExtensions(), "jse");
+        myWebView.addJavascriptInterface(new MainActivityJS(), "ac");
 
         String strLang = Locale.getDefault().getDisplayLanguage();
         if (strLang.equalsIgnoreCase("русский")){
             isEnglish = false;
         }
 
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
-        if (status != ConnectionResult.SUCCESS) {
-            int requestCode = 10;
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, requestCode);
-            dialog.show();
-            this.finish();
-        } else {
+        cd = new ConnectionDetector(getApplicationContext());
 
-            googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-                    R.id.map)).getMap();
 
-            cd = new ConnectionDetector(getApplicationContext());
+        fp = new WebPlaceFinder(myWebView, getAssets());
 
-            if (googleMap != null) {
-                googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                    @Override
-                    public void onMapLoaded() {
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(saintPetersburgBounds, 10));
-                    }
-                });
+        gps = new GPSTracker(this);
 
-                fp = new WebPlaceFinder(googleMap, getAssets());
-
-                gps = new GPSTracker(this);
-
-                googleMap.setInfoWindowAdapter(new CustomWindowAdapter(getLayoutInflater()));
-
-                googleMap.setMyLocationEnabled(true);
-
-                googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-
-                    @Override
-                    public boolean onMarkerClick(Marker arg) {
-                        if (!cd.isConnectingToInternet()) {
-                            alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                                    "Please connect to Internet!", false);
-                            return true;
-                        }
-                        Intent in = new Intent(getApplicationContext(), SinglePlaceActivity.class);
-
-                        LatLngBounds latLngBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
-                        in.putExtra(SinglePlaceActivity.BOUNDS_XL, latLngBounds.southwest.longitude);
-                        in.putExtra(SinglePlaceActivity.BOUNDS_XR, latLngBounds.northeast.longitude);
-                        in.putExtra(SinglePlaceActivity.BOUNDS_YL, latLngBounds.northeast.latitude);
-                        in.putExtra(SinglePlaceActivity.BOUNDS_YR, latLngBounds.southwest.latitude);
-                        in.putExtra(SinglePlaceActivity.VENUE_ID, arg.getSnippet());
-
-                        startActivity(in);
-                        //Toast.makeText(MainActivity.this, arg0.getSnippet(), 1000).show();
-                        return false;
-                    }
-
-                });
-                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
-                    @Override
-                    public void onMapClick(LatLng arg0) {
-                        if (isSearh) {
-                            isSearh = false;
-                            searchPlaces(arg0.latitude, arg0.longitude, menu.getItem(0).getSubMenu());
-                        }
-                    }
-                });
-
-                googleMap.getUiSettings().setZoomControlsEnabled(true);
-            }
-        }
     }
 
 
@@ -147,15 +134,6 @@ public class MainActivity extends Activity {
       getMenuInflater().inflate(R.menu.main, menu);
       this.menu = menu;
       return true;
-    }
-
-    public void searchPlaces(double lat, double lng, SubMenu subMenu) {
-        boolean result = fp.searchPlaces(lat, lng, subMenu);
-        cameraPos = new LatLng(lat, lng);
-        if (!result) {
-            String msg = isEnglish ? "Nothing found." : "Ничего не найдено.";
-            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
-        }
     }
     
     @Override
@@ -189,17 +167,17 @@ public class MainActivity extends Activity {
                 gps.showSettingsAlert();
                 return true;
             }
-            /*if (gps.getLatitude() == 0) {
+            if (gps.getLatitude() == 0) {
                 alert.showAlertDialog(MainActivity.this, "GPS Status",
-                        "GPS do not work correctly!",
+                        "Do not find satelites!",
                         false);
                 return true;
-            }*/
+            }
 
             fp.removeAll();
-            //double lat = 59.9300, lng = 30.3615;
             double lat = gps.getLatitude(), lng = gps.getLongitude();
-            searchPlaces(lat, lng, menu.getItem(0).getSubMenu());
+            myWebView.loadUrl("javascript:searchNear('" + lat +
+                                                 "','" + lng + "')");
             return true;
 
         case R.id.search:
@@ -240,8 +218,7 @@ public class MainActivity extends Activity {
         }
 
         if(item.isChecked()) {
-            LatLng latLng = googleMap.getCameraPosition().target;
-        	fp.remove(query, latLng.latitude, latLng.longitude);
+        	fp.remove(query);
             item.setChecked(false);
         }
         else {
@@ -254,15 +231,15 @@ public class MainActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putDouble("lat", cameraPos.latitude);
-        outState.putDouble("lng", cameraPos.longitude);
+        //outState.putDouble("lat", cameraPos.latitude);
+        //outState.putDouble("lng", cameraPos.longitude);
 
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        cameraPos = new LatLng(savedInstanceState.getDouble("lat"), savedInstanceState.getDouble("lng"));
+        //cameraPos = new LatLng(savedInstanceState.getDouble("lat"), savedInstanceState.getDouble("lng"));
         //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(cameraPos.latitude, cameraPos.longitude), 15));
 
     }

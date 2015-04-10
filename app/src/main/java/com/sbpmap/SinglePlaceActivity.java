@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.sbpmap.EtovidelAPI.EtovidelAPI;
 import com.sbpmap.Foursquare.FoursquareAPI;
 import com.sbpmap.Map.API;
@@ -16,6 +14,7 @@ import com.sbpmap.Ostrovok.OstrovokAPI;
 import com.sbpmap.Restoclub.RestoclubAPI;
 import com.sbpmap.Utils.APIRequest;
 import com.sbpmap.Utils.AlertDialogManager;
+import com.sbpmap.Utils.LatLngBounds;
 
 
 public class SinglePlaceActivity extends Activity{
@@ -37,8 +36,8 @@ public class SinglePlaceActivity extends Activity{
 	         
 	      Intent i = getIntent();
 	      String venueId = i.getStringExtra(VENUE_ID);
-          LatLngBounds latLngBounds = new LatLngBounds(new LatLng(i.getDoubleExtra(BOUNDS_XL, 0), i.getDoubleExtra(BOUNDS_XR, 0)),
-                                                       new LatLng(i.getDoubleExtra(BOUNDS_YL, 0), i.getDoubleExtra(BOUNDS_YR, 0)));
+          LatLngBounds latLngBounds = new LatLngBounds(i.getDoubleExtra(BOUNDS_YR, 0), i.getDoubleExtra(BOUNDS_YL, 0),
+                                                       i.getDoubleExtra(BOUNDS_XL, 0), i.getDoubleExtra(BOUNDS_XR, 0));
 
 	      //alert.showAlertDialog(SinglePlaceActivity.this, "trtr",
 	      //	  venueId, false);
