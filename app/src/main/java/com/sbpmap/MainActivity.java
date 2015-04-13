@@ -121,6 +121,11 @@ public class MainActivity extends Activity {
 
         gps = new GPSTracker(this);
 
+        if (!cd.isConnectingToInternet()) {
+            alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
+                    "Please connect to Internet!", false);
+        }
+
     }
 
 
@@ -181,6 +186,11 @@ public class MainActivity extends Activity {
             return true;
 
         case R.id.search:
+            if (!cd.isConnectingToInternet()) {
+                alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
+                        "Please connect to Internet!", false);
+                return true;
+            }
             fp.removeAll();
             isSearh = true;
             return true;

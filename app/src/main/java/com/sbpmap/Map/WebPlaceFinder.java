@@ -125,11 +125,6 @@ public class WebPlaceFinder {
     }
 
     private void addMarkersToMap(ArrayList<Place> venues, String query, double locLat, double locLng) {
-        float[] delta = new float[1];
-        float[] maxDelta = new float[1];
-
-        //LatLng latLng = googleMap.getProjection().getVisibleRegion().latLngBounds.southwest;
-        //Location.distanceBetween(latLng.latitude, latLng.longitude, locLat, locLng, maxDelta);
         if (venues != null) {
             for (Place fv : venues) {
                 webView.loadUrl("javascript:addMarker('" + fv.getLat() +
@@ -138,20 +133,6 @@ public class WebPlaceFinder {
                                                    "','" + locLng +
                                                    "','" + fv.getId()  +
                                                    "','" + imgMarkers.get(query) + "')");
-                /*MarkerOptions marker = new MarkerOptions().position(new LatLng(fv.getLat(), fv.getLng())).title(fv.getName());
-                Location.distanceBetween(locLat, locLng, fv.getLat(), fv.getLng(), delta);
-
-                marker.snippet(fv.getId());
-                marker.icon(BitmapDescriptorFactory.fromResource(imgMarkers.get(query)));
-
-                float alpha = delta[0] / maxDelta[0];
-                if (alpha > 1) {
-                    continue;
-                }
-                marker.alpha(1 - alpha);
-
-                googleMap.addMarker(marker);*/
-
             }
         }
     }
