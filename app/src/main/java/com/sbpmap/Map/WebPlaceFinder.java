@@ -134,6 +134,8 @@ public class WebPlaceFinder {
             for (Place fv : venues) {
                 webView.loadUrl("javascript:addMarker('" + fv.getLat() +
                                                    "','" + fv.getLng() +
+                                                   "','" + locLat +
+                                                   "','" + locLng +
                                                    "','" + fv.getId()  +
                                                    "','" + imgMarkers.get(query) + "')");
                 /*MarkerOptions marker = new MarkerOptions().position(new LatLng(fv.getLat(), fv.getLng())).title(fv.getName());
