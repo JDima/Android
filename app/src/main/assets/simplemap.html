@@ -14,13 +14,24 @@
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
 
     <script>
-        var markers = [];
+        var curPositionMarker = new google.maps.Marker();
+        var venues = ['Restaurant', 'Hotel', 'Landmark', 'Hostel', 'Mini-hotel', 'Monument', 'Bridge', 'Park'];
+        var markers = new Array();
+
         var map;
-        var marker;
         var defLatLng = new google.maps.LatLng(59.92209, 30.32919);
+
+        function initMarkers() {
+            for (var i = 0, length = venues.length; i < length; i++) {
+                console.log(venues[i]);
+                markers[venues[i]] = []
+                }
+        }
 
         function initialize() {
             console.log("Start: initialize()");
+
+            initMarkers();
 
             var latitude = 0;
             var longitude = 0;
@@ -33,6 +44,7 @@
             var mapOptions = {
                 zoom: 10,
                 center: defLatLng,
+                disableDefaultUI: true,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
 
@@ -62,7 +74,7 @@
             console.log("End: initialize()");
         }
 
-        function addMarker(lat, lng, curlat, curlng, id, icon_name) {
+        function addMarker(lat, lng, curlat, curlng, id, query, icon_name) {
 
             var s = map.getBounds().getSouthWest();
             d1 = distance(lat,lng, curlat, curlng);
@@ -73,10 +85,15 @@
                 return;
             }
             var opacity = 1 - alpha;
+            if (opacity < 0.1) {
+                    return;
+                }
             var location = new google.maps.LatLng(lat, lng);
+
+
             console.log("addMarker(" + lat + ", " + lng + ")" + "  " + opacity);
 
-            marker = new google.maps.Marker({
+            var marker = new google.maps.Marker({
                 position: location,
                 icon: "file:///android_asset/" + icon_name,
                 map: map,
@@ -93,20 +110,42 @@
                 ac.startSinglePlaceActivity(marker.id, s.lat(), s.lng(), n.lat(), n.lng());
             });
 
-            markers.push(marker);
+            marker.setMap(map)
+            markers[query].push(marker);
         }
 
-        function setAllMap(map) {
-            console.log("setAllMap()");
-            for (var i = 0; i < markers.length; i++) {
-                markers[i].setMap(map);
+        function setAllMap(map, query) {
+            console.log("setAllMap(): " + query);
+            for (var i = 0; i < markers[query].length; i++) {
+                markers[query][i].setMap(map);
             }
+        }
+
+        function clearAll() {
+            for (var i = 0, length = venues.length; i < length; i++) {
+                    console.log("Clear: " + venues[i]);
+                    clear(venues[i]);
+                }
         }
 
         function searchNear(lat, lng) {
             console.log("Search near: " + lat + " , " + lng);
 
             var pt = new google.maps.LatLng(lat, lng);
+
+            var infowindow = new google.maps.InfoWindow({
+                content: "You"
+            });
+
+            curPositionMarker = new google.maps.Marker({
+                position: pt,
+                map: map
+            });
+
+            google.maps.event.addListener(curPositionMarker, 'click', function() {
+                infowindow.open(map,curPositionMarker);
+            });
+
             map.setCenter(pt);
             map.setZoom(15);
 
@@ -114,15 +153,25 @@
             var s = bounds.getSouthWest();
             var n = bounds.getNorthEast();
 
+            lat = map.getCenter().lat();
+            lng = map.getCenter().lng();
+
+
 
             console.log("Search near");
             ac.searchPlaces(lat, lng, s.lat(), s.lng(), n.lat(), n.lng());
         }
 
-        function clear() {
+        function clear(query) {
             console.log("clear()");
-            setAllMap(null);
-            markers = [];
+            setAllMap(null, query);
+            markers[query] = [];
+        }
+
+        function isFound(query) {
+            if(!markers[query].length){
+                ac.notFound(query);
+            }
         }
 
         function distance(lat1, lon1, lat2, lon2, unit) {

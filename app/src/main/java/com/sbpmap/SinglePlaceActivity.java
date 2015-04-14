@@ -39,9 +39,6 @@ public class SinglePlaceActivity extends Activity{
           LatLngBounds latLngBounds = new LatLngBounds(i.getDoubleExtra(BOUNDS_YR, 0), i.getDoubleExtra(BOUNDS_YL, 0),
                                                        i.getDoubleExtra(BOUNDS_XL, 0), i.getDoubleExtra(BOUNDS_XR, 0));
 
-	      //alert.showAlertDialog(SinglePlaceActivity.this, "trtr",
-	      //	  venueId, false);
-
           API api;
           if (venueId.contains(WebPlaceFinder.HOSTEL) || venueId.contains(WebPlaceFinder.HOTEL) || venueId.contains(WebPlaceFinder.MINI_HOTEL)) {
               setContentView(R.layout.single_place_hotel);

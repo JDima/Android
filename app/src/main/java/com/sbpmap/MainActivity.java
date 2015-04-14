@@ -57,12 +57,20 @@ public class MainActivity extends Activity {
         }
 
         public void searchPlaces(double lat, double lng, double slat, double slng, double nlat, double nlng) {
+            Log.d("Java log", "Marker: " + lat + "Coordinates:" + slat + "\n" + slng + "\n" + nlat + "\n" + nlng + "\n");
             boolean result = fp.searchPlaces(lat, lng, menu.getItem(0).getSubMenu(), new LatLngBounds(slat, slng, nlat, nlng));
-
             if (!result) {
-                String msg = isEnglish ? "Nothing found." : "Ничего не найдено.";
-                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
+                String msg = isEnglish ? "Select places to search!" : "Выберите места для поиска!";
+                alert.showAlertDialog(MainActivity.this, "Error!",
+                        msg, false);
             }
+        }
+
+        public void notFound(String query) {
+            String msg = isEnglish ? query + ": Nothing found!" : query + ": Ничего не найдено!";
+            alert.showAlertDialog(MainActivity.this, "Information.",
+                    msg, true);
+
         }
     }
 
@@ -106,7 +114,6 @@ public class MainActivity extends Activity {
         });
 
         myWebView.loadUrl(MAP_URL);
-        myWebView.addJavascriptInterface(new WebPlaceFinder.JavaScriptExtensions(), "jse");
         myWebView.addJavascriptInterface(new MainActivityJS(), "ac");
 
         String strLang = Locale.getDefault().getDisplayLanguage();
@@ -117,7 +124,7 @@ public class MainActivity extends Activity {
         cd = new ConnectionDetector(getApplicationContext());
 
 
-        fp = new WebPlaceFinder(myWebView, getAssets());
+        fp = new WebPlaceFinder(getBaseContext(), myWebView, getAssets());
 
         gps = new GPSTracker(this);
 
