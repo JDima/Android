@@ -55,11 +55,6 @@
         </menu>
     </item>
 
-    <item android:id="@+id/search"
-    android:title="@string/search"
-    android:orderInCategory="100"
-    android:showAsAction="never" />
-
     <item android:id="@+id/search_near"
         android:title="@string/search_near"
         android:orderInCategory="100"

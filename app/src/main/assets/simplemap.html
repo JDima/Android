@@ -12,7 +12,7 @@
         }
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
-
+    <script type="text/javascript" src="infobox.js"></script>
     <script>
         var curPositionMarker = new google.maps.Marker();
         var venues = ['Restaurant', 'Hotel', 'Landmark', 'Hostel', 'Mini-hotel', 'Monument', 'Bridge', 'Park'];
@@ -45,36 +45,35 @@
                 zoom: 10,
                 center: defLatLng,
                 disableDefaultUI: true,
+                zoomControl: true,
+                disableDoubleClickZoom: true,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
 
             map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-            google.maps.event.addListener(map, 'click', function(event) {
-                var search = ac.search();
+            google.maps.event.addListener(map, 'dblclick', function(event) {
                 console.log("mapClicked");
-                if (search) {
-                    var lat = event.latLng.lat();
-                    var lng = event.latLng.lng();
 
-                    var pt = new google.maps.LatLng(lat, lng);
-                    map.setCenter(pt);
-                    map.setZoom(15);
+                var lat = event.latLng.lat();
+                var lng = event.latLng.lng();
 
-                    var bounds = map.getBounds();
-                    var s = bounds.getSouthWest();
-                    var n = bounds.getNorthEast();
+                var pt = new google.maps.LatLng(lat, lng);
+                map.setCenter(pt);
+                map.setZoom(15);
+
+                var bounds = map.getBounds();
+                var s = bounds.getSouthWest();
+                var n = bounds.getNorthEast();
 
 
-                    console.log("mapClicked");
-                    ac.searchPlaces(lat, lng, s.lat(), s.lng(), n.lat(), n.lng());
-                }
+                ac.searchPlaces(lat, lng, s.lat(), s.lng(), n.lat(), n.lng());
             });
 
             console.log("End: initialize()");
         }
 
-        function addMarker(lat, lng, curlat, curlng, id, query, icon_name) {
+        function addMarker(lat, lng, curlat, curlng, id, query, marker_name, icon_name) {
 
             var s = map.getBounds().getSouthWest();
             d1 = distance(lat,lng, curlat, curlng);
@@ -100,6 +99,34 @@
                 opacity: opacity,
                 id: id
             });
+
+            var boxText = document.createElement("div");
+            boxText.style.cssText = "border: 1px solid black; margin-top: 2px; background: #c4c3bc; padding: 2px;";
+            boxText.innerHTML = marker_name;
+
+            var width = 2.9 * boxText.innerHTML.length;
+            console.log(width);
+            var myOptions = {
+                 content: boxText
+                ,disableAutoPan: false
+                ,maxWidth: 0
+                ,pixelOffset: new google.maps.Size(-width, -52)
+                ,zIndex: null
+                ,boxStyle: {
+                  background: "url('tipbox.gif') no-repeat"
+                  ,opacity: opacity
+                 }
+                ,closeBoxURL: ""
+                ,infoBoxClearance: new google.maps.Size(1, 1)
+                ,isHidden: false
+                ,pane: "floatPane"
+                ,enableEventPropagation: false
+		    };
+
+
+            var ib = new InfoBox(myOptions);
+		    ib.open(map, marker);
+
 
             google.maps.event.addListener(marker, 'click', function(event) {
                 console.log("It is marker: " + marker.id );
@@ -186,7 +213,7 @@
             dist = dist * 180/Math.PI
             dist = dist * 60 * 1.1515
             return dist
-}
+        }
 
 
         $(document).on('click', '.add-markers', function(e) {

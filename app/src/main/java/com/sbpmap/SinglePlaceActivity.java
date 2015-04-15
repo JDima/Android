@@ -62,7 +62,7 @@ public class SinglePlaceActivity extends Activity{
 	      protected void onPreExecute() {
 	    	  super.onPreExecute();
               pDialog = new ProgressDialog(SinglePlaceActivity.this);
-              pDialog.setMessage("Loading profile ...");
+              pDialog.setMessage("Searching ...");
               pDialog.setIndeterminate(false);
               pDialog.setCancelable(false);
               pDialog.show();

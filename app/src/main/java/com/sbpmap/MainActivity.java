@@ -48,16 +48,13 @@ public class MainActivity extends Activity {
             startActivity(in);
         }
 
-        public boolean search() {
-            if (isSearh) {
-                isSearh = false;
-                return true;
-            }
-            return false;
-        }
-
         public void searchPlaces(double lat, double lng, double slat, double slng, double nlat, double nlng) {
-            Log.d("Java log", "Marker: " + lat + "Coordinates:" + slat + "\n" + slng + "\n" + nlat + "\n" + nlng + "\n");
+            if (!cd.isConnectingToInternet()) {
+                alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
+                        "Please connect to Internet!", false);
+                return;
+            }
+            Log.d("Java log", "Coordinates:" + slat + "\n" + slng + "\n" + nlat + "\n" + nlng + "\n");
             boolean result = fp.searchPlaces(lat, lng, menu.getItem(0).getSubMenu(), new LatLngBounds(slat, slng, nlat, nlng));
             if (!result) {
                 String msg = isEnglish ? "Select places to search!" : "Выберите места для поиска!";
@@ -75,7 +72,6 @@ public class MainActivity extends Activity {
     }
 
     WebView myWebView;
-    private boolean isSearh = false;
     private Menu menu;
     public static boolean isEnglish = true;
 
@@ -94,7 +90,9 @@ public class MainActivity extends Activity {
 
         myWebView = (WebView)findViewById(R.id.mapview);
         myWebView.getSettings().setJavaScriptEnabled(true);
-
+        myWebView.clearHistory();
+        myWebView.clearFormData();
+        myWebView.clearCache(true);
 
 
         myWebView.setWebViewClient(new WebViewClient() {
@@ -124,7 +122,7 @@ public class MainActivity extends Activity {
         cd = new ConnectionDetector(getApplicationContext());
 
 
-        fp = new WebPlaceFinder(getBaseContext(), myWebView, getAssets());
+        fp = new WebPlaceFinder(MainActivity.this, myWebView, getAssets());
 
         gps = new GPSTracker(this);
 
@@ -151,7 +149,6 @@ public class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	String query = null;
-        isSearh = false;
         switch(item.getItemId())
         {
         case R.id.about:
@@ -190,16 +187,6 @@ public class MainActivity extends Activity {
             double lat = gps.getLatitude(), lng = gps.getLongitude();
             myWebView.loadUrl("javascript:searchNear('" + lat +
                                                  "','" + lng + "')");
-            return true;
-
-        case R.id.search:
-            if (!cd.isConnectingToInternet()) {
-                alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                        "Please connect to Internet!", false);
-                return true;
-            }
-            fp.removeAll();
-            isSearh = true;
             return true;
 
         case R.id.places:

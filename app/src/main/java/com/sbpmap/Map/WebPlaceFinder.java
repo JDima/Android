@@ -2,6 +2,7 @@ package com.sbpmap.Map;
 
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.location.Location;
@@ -96,6 +97,7 @@ public class WebPlaceFinder {
         String response;
         String query;
         API api;
+        ProgressDialog pDialog;
 
         @Override
         protected String doInBackground(APIRequest... params) {
@@ -108,6 +110,11 @@ public class WebPlaceFinder {
 
         @Override
         protected void onPreExecute() {
+            pDialog = new ProgressDialog(mContext);
+            pDialog.setMessage("Searching ...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
         }
 
         @Override
@@ -117,6 +124,7 @@ public class WebPlaceFinder {
                 venues = api.parseResponse(response);
                 addMarkersToMap(venues, query, api.getLat(), api.getLng());
             }
+            pDialog.dismiss();
         }
     }
 
@@ -129,6 +137,7 @@ public class WebPlaceFinder {
                                                    "','" + locLng +
                                                    "','" + fv.getId()  +
                                                    "','" + query  +
+                                                   "','" + fv.getName()  +
                                                    "','" + imgMarkers.get(query) + "')");
             }
             webView.loadUrl("javascript:isFound('" + query + "')");
