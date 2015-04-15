@@ -62,7 +62,11 @@ public class SinglePlaceActivity extends Activity{
 	      protected void onPreExecute() {
 	    	  super.onPreExecute();
               pDialog = new ProgressDialog(SinglePlaceActivity.this);
-              pDialog.setMessage("Searching ...");
+              if (MainActivity.isEnglish) {
+                  pDialog.setMessage("Searching ...");
+              } else {
+                  pDialog.setMessage("Поиск ...");
+              }
               pDialog.setIndeterminate(false);
               pDialog.setCancelable(false);
               pDialog.show();

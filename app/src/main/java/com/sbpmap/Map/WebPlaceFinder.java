@@ -112,7 +112,11 @@ public class WebPlaceFinder {
         @Override
         protected void onPreExecute() {
             pDialog = new ProgressDialog(mContext);
-            pDialog.setMessage("Searching ...");
+            if (MainActivity.isEnglish) {
+                pDialog.setMessage("Searching ...");
+            } else {
+                pDialog.setMessage("Поиск ...");
+            }
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
             pDialog.show();

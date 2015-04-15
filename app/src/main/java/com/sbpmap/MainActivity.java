@@ -234,12 +234,12 @@ public class MainActivity extends Activity {
         else {
             String msg;
             if (isEnglish) {
-                msg = "You choose - ";
+                msg = "You choosed - ";
             } else {
                 msg = "Вы выбрали - ";
             }
             Log.d("Java log", msg + query);
-            Toast.makeText(MainActivity.this, msg + query, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), msg + query, Toast.LENGTH_LONG).show();
             item.setChecked(true);
         }
     	
