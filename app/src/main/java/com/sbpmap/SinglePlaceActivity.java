@@ -18,7 +18,7 @@ import com.sbpmap.Utils.LatLngBounds;
 
 
 public class SinglePlaceActivity extends Activity{
-      public static final String NOT_PRESENT = "Not present";
+      public static final String NOT_PRESENT = MainActivity.isEnglish ? "Not present": "Неизвестно";
       public static final String VENUE_ID = "venue_id";
       public static final String BOUNDS_XL = "bounds_xl";
       public static final String BOUNDS_XR = "bounds_xr";

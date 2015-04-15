@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    WebView myWebView;
+    static WebView myWebView;
     private Menu menu;
     public static boolean isEnglish = true;
 
