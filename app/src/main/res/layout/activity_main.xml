@@ -1,11 +1,35 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center"
+    android:orientation="vertical"
+    android:id="@+id/linweb"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <WebView
-        android:id="@+id/mapview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <WebView android:id="@+id/mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-</RelativeLayout>
+    <LinearLayout android:orientation="horizontal"
+        android:id="@+id/bottommenu"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <Button android:textStyle="bold"
+            android:id="@+id/search_near"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/search_near"
+            android:layout_weight="2" />
+
+        <Button android:textStyle="bold"
+            android:id="@+id/clean"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/clean"
+            android:layout_weight="2" />
+
+    </LinearLayout>
+
+</LinearLayout>

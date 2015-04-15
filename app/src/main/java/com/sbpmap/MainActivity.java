@@ -8,20 +8,22 @@ import com.sbpmap.Utils.LatLngBounds;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Intent;
-import android.content.pm.ConfigurationInfo;
+
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
+
+import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.Toast;
+
 
 import java.util.Locale;
 
@@ -55,7 +57,7 @@ public class MainActivity extends Activity {
                 return;
             }
             Log.d("Java log", "Coordinates:" + slat + "\n" + slng + "\n" + nlat + "\n" + nlng + "\n");
-            boolean result = fp.searchPlaces(lat, lng, menu.getItem(0).getSubMenu(), new LatLngBounds(slat, slng, nlat, nlng));
+            boolean result = fp.searchPlaces(lat, lng, menu, new LatLngBounds(slat, slng, nlat, nlng));
             if (!result) {
                 String msg = isEnglish ? "Select places to search!" : "Выберите места для поиска!";
                 alert.showAlertDialog(MainActivity.this, "Error!",
@@ -103,7 +105,7 @@ public class MainActivity extends Activity {
 
         myWebView.setWebChromeClient(new WebChromeClient() {
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                Log.d("JavaScript log", consoleMessage.message() + " — From line "
+                Log.d("Java log", consoleMessage.message() + " — From line "
                         + consoleMessage.lineNumber() + " of "
                         + consoleMessage.sourceId());
 
@@ -131,6 +133,50 @@ public class MainActivity extends Activity {
                     "Please connect to Internet!", false);
         }
 
+
+        Button btnClean = (Button)this.findViewById(R.id.clean);
+        btnClean.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fp.removeAll();
+                for (int i = 0; i < WebPlaceFinder.VENUES.length; i++)
+                    menu.getItem(i).setChecked(false);
+                return;
+
+            }
+        });
+
+        Button btnSearchNear = (Button)this.findViewById(R.id.search_near);
+        btnSearchNear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!cd.isConnectingToInternet()) {
+                    alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
+                            "Please connect to Internet!", false);
+                    return;
+                }
+                if (gps.canGetLocation()) {
+               /* alert.showAlertDialog(MainActivity.this, "GPS Status",
+                        "latitude:" + gps.getLatitude() + ", longitude: " + gps.getLongitude(),
+                        false);*/
+                } else {
+                    gps.showSettingsAlert();
+                    return;
+                }
+                if (gps.getLatitude() == 0) {
+                    alert.showAlertDialog(MainActivity.this, "GPS Status",
+                            "Do not find satelites!",
+                            false);
+                    return;
+                }
+
+                fp.removeAll();
+                double lat = gps.getLatitude(), lng = gps.getLongitude();
+                myWebView.loadUrl("javascript:searchNear('" + lat +
+                        "','" + lng + "')");
+
+            }
+        });
     }
 
 
@@ -151,46 +197,6 @@ public class MainActivity extends Activity {
     	String query = null;
         switch(item.getItemId())
         {
-        case R.id.about:
-            Intent in = new Intent(getApplicationContext(), ActivityMain.class);
-            startActivity(in);
-            return true;
-        case R.id.clean:
-            fp.removeAll();
-            for (int i = 0; i < WebPlaceFinder.VENUES.length; i++)
-                menu.getItem(0).getSubMenu().getItem(i).setChecked(false);
-            return true;
-
-
-        case R.id.search_near:
-            if (!cd.isConnectingToInternet()) {
-                alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                        "Please connect to Internet!", false);
-                return true;
-            }
-            if (gps.canGetLocation()) {
-               /* alert.showAlertDialog(MainActivity.this, "GPS Status",
-                        "latitude:" + gps.getLatitude() + ", longitude: " + gps.getLongitude(),
-                        false);*/
-            } else {
-                gps.showSettingsAlert();
-                return true;
-            }
-            if (gps.getLatitude() == 0) {
-                alert.showAlertDialog(MainActivity.this, "GPS Status",
-                        "Do not find satelites!",
-                        false);
-                return true;
-            }
-
-            fp.removeAll();
-            double lat = gps.getLatitude(), lng = gps.getLongitude();
-            myWebView.loadUrl("javascript:searchNear('" + lat +
-                                                 "','" + lng + "')");
-            return true;
-
-        case R.id.places:
-            return true;
 
         case R.id.hotel:
         	query = WebPlaceFinder.HOTEL;
@@ -226,6 +232,14 @@ public class MainActivity extends Activity {
             item.setChecked(false);
         }
         else {
+            String msg;
+            if (isEnglish) {
+                msg = "You choose - ";
+            } else {
+                msg = "Вы выбрали - ";
+            }
+            Log.d("Java log", msg + query);
+            Toast.makeText(MainActivity.this, msg + query, Toast.LENGTH_SHORT).show();
             item.setChecked(true);
         }
     	

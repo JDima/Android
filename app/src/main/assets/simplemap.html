@@ -17,21 +17,23 @@
         var curPositionMarker = new google.maps.Marker();
         var venues = ['Restaurant', 'Hotel', 'Landmark', 'Hostel', 'Mini-hotel', 'Monument', 'Bridge', 'Park'];
         var markers = new Array();
+        var infoBoxes = new Array();
 
         var map;
         var defLatLng = new google.maps.LatLng(59.92209, 30.32919);
 
-        function initMarkers() {
+        function init() {
             for (var i = 0, length = venues.length; i < length; i++) {
                 console.log(venues[i]);
                 markers[venues[i]] = []
+                infoBoxes[venues[i]] = []
                 }
         }
 
         function initialize() {
             console.log("Start: initialize()");
 
-            initMarkers();
+            init();
 
             var latitude = 0;
             var longitude = 0;
@@ -139,12 +141,14 @@
 
             marker.setMap(map)
             markers[query].push(marker);
+            infoBoxes[query].push(ib);
         }
 
         function setAllMap(map, query) {
             console.log("setAllMap(): " + query);
             for (var i = 0; i < markers[query].length; i++) {
                 markers[query][i].setMap(map);
+                infoBoxes[query][i].setMap(map);
             }
         }
 
@@ -193,6 +197,7 @@
             console.log("clear()");
             setAllMap(null, query);
             markers[query] = [];
+            infoBoxes[query] = [];
         }
 
         function isFound(query) {

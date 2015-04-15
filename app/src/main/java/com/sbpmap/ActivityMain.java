@@ -1,6 +1,7 @@
 package com.sbpmap;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.media.MediaPlayer;
@@ -159,17 +160,13 @@ public class ActivityMain extends Activity implements MediaPlayer.OnCompletionLi
         {
             Log.d("AMDEPTH", "LOCALE unknown: " + strLang);
             language = AppIntro.LANGUAGE_UNKNOWN;
-            //AlertDialog alertDialog;
-            //alertDialog = new AlertDialog.Builder(this).create();
-            //alertDialog.setTitle("Language settings");
-            //alertDialog.setMessage("This application available only in English or Russian language.");
-            //alertDialog.show();
         }
         // Create application
         m_app = new AppIntro(this, language);
         // Create view
         m_appView = new AppView(this);
         setContentView(m_appView);
+
 
     }
 
@@ -181,8 +178,17 @@ public class ActivityMain extends Activity implements MediaPlayer.OnCompletionLi
         // created, to briefly hint to the user that UI controls
         // are available.
 
-        // delayedHide(100);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                Intent in = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(in);
+            }
+        }, 5000);
     }
+
+
+
     public void onCompletion(MediaPlayer mp)
     {
         Log.d("AMDEPTH", "onCompletion: Video play is completed");

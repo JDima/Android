@@ -8,6 +8,7 @@ import android.content.res.AssetManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.Menu;
 import android.view.SubMenu;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -66,7 +67,7 @@ public class WebPlaceFinder {
         this.webView = webView;
     }
 
-    public boolean searchPlaces(double lat, double lng, SubMenu subMenu, LatLngBounds curLatLngBounds) {
+    public boolean searchPlaces(double lat, double lng, Menu subMenu, LatLngBounds curLatLngBounds) {
         boolean oneIsChecked = false;
         for (int id = 0; id < WebPlaceFinder.VENUES.length; id++) {
             if (subMenu.getItem(id).isChecked()) {
