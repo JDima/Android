@@ -22,16 +22,18 @@
         var map;
         var defLatLng = new google.maps.LatLng(59.92209, 30.32919);
 
+        function mapZoom(lat, lng) {
+            var pt = new google.maps.LatLng(lat, lng);
+            map.setCenter(pt);
+            map.setZoom(15);
+        }
+
         function runIfNotDblClick(event) {
             if(singleClick){
                 console.log("mapClicked");
 
                 var lat = event.latLng.lat();
                 var lng = event.latLng.lng();
-
-                var pt = new google.maps.LatLng(lat, lng);
-                map.setCenter(pt);
-                map.setZoom(15);
 
                 var bounds = map.getBounds();
                 var s = bounds.getSouthWest();
@@ -168,6 +170,18 @@
                     console.log("Clear: " + venues[i]);
                     clear(venues[i]);
                 }
+        }
+
+        function cleanMap() {
+            for (var i = 0, length = venues.length; i < length; i++) {
+
+                if (markers[venues[i]].length != 0) {
+                    console.log("isMapClean() " + markers[venues[i]].length);
+                    ac.cleanMap();
+                    return;
+                }
+            }
+            ac.mapIsEmpty();
         }
 
         function searchNear(lat, lng) {

@@ -16,28 +16,27 @@ import java.util.ArrayList;
 
 public class AlertDialogManager {
 
-    public static final String HOTEL = "Хотель";
+    public static final String HOTEL = "Отель";
     public static final String HOSTEL = "Хостел";
     public static final String MINI_HOTEL = "Миниотель";
     public static final String LANDMARK = "Достопримечательность";
     public static final String BRIDGE = "Мост";
     public static final String PARK = "Парк";
     public static final String MONUMENT = "Монумент";
-    public static final String RESTAURANT = "Рестаран";
+    public static final String RESTAURANT = "Ресторан";
 
     public static final String[] RU_VENUES = {RESTAURANT, HOTEL, LANDMARK, HOSTEL, MINI_HOTEL, MONUMENT, BRIDGE, PARK};
 
 	 @SuppressWarnings("deprecation")
-	public static void showAlertDialog(Context context, String title, String message,
-	            Boolean status) {
+	public static void showAlertDialog(Context context, String title, String message, int icon) {
          AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 
          alertDialog.setTitle(title);
 
+
          alertDialog.setMessage(message);
 
-         if (status != null)
-             alertDialog.setIcon((status) ? R.drawable.success : R.drawable.fail);
+         alertDialog.setIcon(icon);
 
          alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
              public void onClick(DialogInterface dialog, int which) {
@@ -104,7 +103,7 @@ public class AlertDialogManager {
             {
                 if (seletedItems.isEmpty()) {
                     AlertDialogManager.showAlertDialog(context, error,
-                            notSelected, false);
+                            notSelected, R.drawable.fail);
                 } else {
                     fp.searchPlaces(lat, lng, seletedItems, latLngBounds);
                     dialog.dismiss();
@@ -133,6 +132,6 @@ public class AlertDialogManager {
             msg = "Подключитесь к интернету!";
         }
         AlertDialogManager.showAlertDialog(context, title,
-                msg, false);
+                msg, R.drawable.fail);
     }
 }

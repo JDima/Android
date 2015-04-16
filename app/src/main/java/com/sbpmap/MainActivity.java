@@ -28,12 +28,13 @@ import android.widget.Button;
 import android.widget.Toast;
 
 
+import java.util.Arrays;
 import java.util.Locale;
 
 
 public class MainActivity extends Activity {
 
-    WebView myWebView;
+    static WebView myWebView;
     public static boolean isEnglish = true;
     private static final String MAP_URL = "file:///android_asset/simplemap.html";
 
@@ -62,9 +63,10 @@ public class MainActivity extends Activity {
         }
 
         public void notFound(String query) {
-            String msg = isEnglish ? query + ": Nothing found!" : query + ": Ничего не найдено!";
+            String queryMsg = isEnglish ? query : AlertDialogManager.RU_VENUES[Arrays.asList(WebPlaceFinder.VENUES).indexOf(query)];
+            String msg = isEnglish ? queryMsg + ": Nothing found!" : queryMsg + ": Ничего не найдено!";
             alert.showAlertDialog(MainActivity.this, "Information.",
-                    msg, true);
+                    msg, R.drawable.success);
 
         }
 
@@ -75,6 +77,21 @@ public class MainActivity extends Activity {
                 return;
             }
             alert.showSelectCategoryDialog(MainActivity.this, fp, lat, lng, new LatLngBounds(slat, slng, nlat, nlng));
+        }
+        public void cleanMap() {
+            fp.removeAll();
+            alert.showAlertDialog(MainActivity.this,
+                    isEnglish ? "Removing" : "Удаление",
+                    isEnglish ? "All objects are removed!" : "Все объекты удалены!",
+                    R.drawable.remove);
+            return;
+        }
+        public void mapIsEmpty() {
+            alert.showAlertDialog(MainActivity.this,
+                    isEnglish ? "Removing" : "Удаление",
+                    isEnglish ? "Map does not contain markers!" : "Карта не содержит маркеров!",
+                    R.drawable.remove);
+            return;
         }
     }
 
@@ -139,19 +156,14 @@ public class MainActivity extends Activity {
             }
         });
 
-        fp = new WebPlaceFinder(MainActivity.this, myWebView, getAssets());
+        fp = new WebPlaceFinder(MainActivity.this, getAssets());
 
 
         Button btnClean = (Button)this.findViewById(R.id.clean);
         btnClean.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fp.removeAll();
-                alert.showAlertDialog(MainActivity.this,
-                        isEnglish ? "Removing" : "Удаление",
-                        isEnglish ? "All objects are removed!" : "Все объекты удалены!",
-                        true);
-                return;
+                myWebView.loadUrl("javascript:cleanMap()");
 
             }
         });
@@ -177,7 +189,7 @@ public class MainActivity extends Activity {
                     String msg = isEnglish ? "Incorrect GPS location" : "Неверная GPS локация";
                     alert.showAlertDialog(MainActivity.this, title,
                             msg,
-                            false);
+                            R.drawable.fail);
                     return;
                 }
 
@@ -245,6 +257,10 @@ public class MainActivity extends Activity {
                 // do what you want when user is in PORTRAIT
                 break;
         }
-
     }
+
+    public static void callWebView(final String query) {
+        myWebView.loadUrl(query);
+    }
+
 }

@@ -28,7 +28,6 @@ public class WebPlaceFinder {
 
 
     Context mContext;
-    private static WebView webView;
     private AssetManager assetManager;
 
     public static final String HOTEL = "Hotel";
@@ -42,7 +41,7 @@ public class WebPlaceFinder {
 
     public static final String[] VENUES = {RESTAURANT, HOTEL, LANDMARK, HOSTEL, MINI_HOTEL, MONUMENT, BRIDGE, PARK};
 
-    public WebPlaceFinder(Context context, WebView webView, AssetManager assetManager) {
+    public WebPlaceFinder(Context context, AssetManager assetManager) {
         mContext = context;
         for (String query : VENUES) {
             tasksList.put(query, new ArrayList<PlaceFinder>());
@@ -53,10 +52,12 @@ public class WebPlaceFinder {
         }
 
         this.assetManager = assetManager;
-        this.webView = webView;
     }
 
     public void searchPlaces(double lat, double lng, ArrayList<Integer> seletedItems, LatLngBounds curLatLngBounds) {
+        MainActivity.callWebView("javascript:mapZoom('" + lat +
+                "','" + lng + "')");
+
         for (int selectedItem : seletedItems) {
             Log.d("Java log", "searchPlaces(): " + lat + " " + lng);
             execute(curLatLngBounds, lat, lng, WebPlaceFinder.VENUES[selectedItem], 1000);
@@ -117,22 +118,22 @@ public class WebPlaceFinder {
     private void addMarkersToMap(ArrayList<Place> venues, String query, double locLat, double locLng) {
         if (venues != null) {
             for (Place fv : venues) {
-                webView.loadUrl("javascript:addMarker('" + fv.getLat() +
-                                                   "','" + fv.getLng() +
-                                                   "','" + locLat +
-                                                   "','" + locLng +
-                                                   "','" + fv.getId()  +
-                                                   "','" + query  +
-                                                   "','" + fv.getName()  +
-                                                   "','" + imgMarkers.get(query) + "')");
+                MainActivity.callWebView("javascript:addMarker('" + fv.getLat() +
+                        "','" + fv.getLng() +
+                        "','" + locLat +
+                        "','" + locLng +
+                        "','" + fv.getId()  +
+                        "','" + query  +
+                        "','" + fv.getName()  +
+                        "','" + imgMarkers.get(query) + "')");
             }
-            webView.loadUrl("javascript:isFound('" + query + "')");
+            MainActivity.callWebView("javascript:isFound('" + query + "')");
         }
     }
 
     public void removeAll() {
         Log.d("Java log", "removeAll()");
-        webView.loadUrl("javascript:clearAll()");
+        MainActivity.callWebView("javascript:clearAll()");
         for (Map.Entry<String, ArrayList<PlaceFinder> >  entry : tasksList.entrySet()) {
             ArrayList<PlaceFinder> placeFinders = entry.getValue();
             if (placeFinders != null) {
