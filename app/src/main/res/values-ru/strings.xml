@@ -3,7 +3,6 @@
 
     <string name="app_name">Карта Спб</string>
     <string name="action_settings">Настройки</string>
-    <string name="search">Поиск</string>
     <string name="clean">Очистить</string>
     <string name="search_near">Поиск рядом</string>
 
@@ -42,5 +41,10 @@
     <string name="has_parking">Парковка</string>
     <string name="has_pool">Бассейн</string>
     <string name="has_bathroom">Душ</string>
+
+    <string name="search">Поиск</string>
+    <string name="cancel">Отменить</string>
+    <string name="error">Ошибка!</string>
+    <string name="titleSelectCategory">"Вы не выбрали категории!"</string>
 
 </resources>

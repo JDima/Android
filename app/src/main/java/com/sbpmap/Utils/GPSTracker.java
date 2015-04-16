@@ -13,6 +13,8 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.sbpmap.MainActivity;
+
 public class GPSTracker extends Service implements LocationListener {
 	 
     private final Context mContext;
@@ -152,16 +154,19 @@ public class GPSTracker extends Service implements LocationListener {
      * */
     public void showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
- 
-        // Setting Dialog Title
-        alertDialog.setTitle("GPS is settings");
- 
-        // Setting Dialog Message
+
+        String title = MainActivity.isEnglish ? "GPS is settings" : " GPS настройки";
+        alertDialog.setTitle(title);
+
+        String msg = MainActivity.isEnglish
+                ? "GPS is not enabled. Do you want to go to settings menu?"
+                : "GPS не включён. Желаете перейти в меню настроек?";
         alertDialog
-                .setMessage("GPS is not enabled. Do you want to go to settings menu?");
- 
+                .setMessage(msg);
+
+        String settings = MainActivity.isEnglish ? "Settings" : "Настройки";
         // On pressing Settings button
-        alertDialog.setPositiveButton("Settings",
+        alertDialog.setPositiveButton(settings,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(
@@ -171,7 +176,8 @@ public class GPSTracker extends Service implements LocationListener {
                 });
  
         // on pressing cancel button
-        alertDialog.setNegativeButton("Cancel",
+        String cancel = MainActivity.isEnglish ? "Cancel" : "Отменить";
+        alertDialog.setNegativeButton(cancel,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();

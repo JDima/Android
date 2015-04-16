@@ -5,13 +5,9 @@ package com.sbpmap.Map;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.Menu;
-import android.view.SubMenu;
 import android.webkit.WebView;
-import android.widget.Toast;
 
 import com.sbpmap.EtovidelAPI.EtovidelAPI;
 
@@ -19,8 +15,6 @@ import com.sbpmap.MainActivity;
 import com.sbpmap.Ostrovok.OstrovokAPI;
 import com.sbpmap.Restoclub.RestoclubAPI;
 import com.sbpmap.Utils.APIRequest;
-import com.sbpmap.R;
-import com.sbpmap.Utils.AlertDialogManager;
 import com.sbpmap.Utils.LatLngBounds;
 
 import java.util.ArrayList;
@@ -39,7 +33,7 @@ public class WebPlaceFinder {
 
     public static final String HOTEL = "Hotel";
     public static final String HOSTEL = "Hostel";
-    public static final String MINI_HOTEL = "Mini-hotel";
+    public static final String MINI_HOTEL = "Minihotel";
     public static final String LANDMARK = "Landmark";
     public static final String BRIDGE = "Bridge";
     public static final String PARK = "Park";
@@ -54,34 +48,24 @@ public class WebPlaceFinder {
             tasksList.put(query, new ArrayList<PlaceFinder>());
         }
 
-        imgMarkers.put(HOSTEL, "hostel.png");
-        imgMarkers.put(HOTEL, "hotel.png");
-        imgMarkers.put(RESTAURANT, "restaurant.png");
-        imgMarkers.put(LANDMARK, "museum.png");
-        imgMarkers.put(MONUMENT, "monument.png");
-        imgMarkers.put(BRIDGE, "bridge.png");
-        imgMarkers.put(PARK, "park.png");
-        imgMarkers.put(MINI_HOTEL, "minihotel.png");
+        for (String venue : VENUES) {
+            imgMarkers.put(venue, venue.toLowerCase() + ".png");
+        }
 
         this.assetManager = assetManager;
         this.webView = webView;
     }
 
-    public boolean searchPlaces(double lat, double lng, Menu subMenu, LatLngBounds curLatLngBounds) {
-        boolean oneIsChecked = false;
-        for (int id = 0; id < WebPlaceFinder.VENUES.length; id++) {
-            if (subMenu.getItem(id).isChecked()) {
-                Log.d("Java log", "LAt: " + lat);
-                execute(curLatLngBounds, lat, lng, WebPlaceFinder.VENUES[id], 1000);
-                oneIsChecked = true;
-            }
+    public void searchPlaces(double lat, double lng, ArrayList<Integer> seletedItems, LatLngBounds curLatLngBounds) {
+        for (int selectedItem : seletedItems) {
+            Log.d("Java log", "searchPlaces(): " + lat + " " + lng);
+            execute(curLatLngBounds, lat, lng, WebPlaceFinder.VENUES[selectedItem], 1000);
         }
-        return oneIsChecked;
     }
 
     public void execute(LatLngBounds curLatLngBounds, double lat, double lng, String query, int radius) {
         API api;
-        Log.d("Java log", "Query: " + query);
+        Log.d("Java log", "execute(): query - " + query);
         if (query.equals(RESTAURANT)) {
             api = new RestoclubAPI(curLatLngBounds, lat, lng);
         } else if(query.equals(HOSTEL) || query.equals(HOTEL) || query.equals(MINI_HOTEL)) {
@@ -112,11 +96,8 @@ public class WebPlaceFinder {
         @Override
         protected void onPreExecute() {
             pDialog = new ProgressDialog(mContext);
-            if (MainActivity.isEnglish) {
-                pDialog.setMessage("Searching ...");
-            } else {
-                pDialog.setMessage("Поиск ...");
-            }
+            String msg = MainActivity.isEnglish ? "Searching ..." : "Поиск ...";
+            pDialog.setMessage(msg);
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
             pDialog.show();
@@ -149,14 +130,8 @@ public class WebPlaceFinder {
         }
     }
 
-    public void remove(String query) {
-        webView.loadUrl("javascript:clear('" + query + "')");
-        for (PlaceFinder task : tasksList.get(query)) {
-            task.cancel(true);
-        }
-    }
-
     public void removeAll() {
+        Log.d("Java log", "removeAll()");
         webView.loadUrl("javascript:clearAll()");
         for (Map.Entry<String, ArrayList<PlaceFinder> >  entry : tasksList.entrySet()) {
             ArrayList<PlaceFinder> placeFinders = entry.getValue();

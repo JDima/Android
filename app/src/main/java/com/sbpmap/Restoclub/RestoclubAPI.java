@@ -33,6 +33,7 @@ public class RestoclubAPI implements API {
     private double lat;
     private double lng;
     private static final String RESTOCLUB = "http://www.restoclub.ru/site/all/main/";
+    private static final String GET_MARKERS = "http://www.restoclub.ru/ajax/nmap/get_markers/";
     private LatLngBounds latLngBounds;
 
 
@@ -50,7 +51,7 @@ public class RestoclubAPI implements API {
 
     @Override
     public HttpUriRequest getPlacesRequest(String query, int radius, double lat, double lng) {
-        HttpPost httppost = new HttpPost("http://www.restoclub.ru/ajax/nmap/get_markers/");
+        HttpPost httppost = new HttpPost(GET_MARKERS);
 
         try {
             List<NameValuePair> params = new ArrayList<>(1);

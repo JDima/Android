@@ -30,13 +30,22 @@ import java.util.Locale;
 
 public class MainActivity extends Activity {
 
+    WebView myWebView;
+    public static boolean isEnglish = true;
+
+    private static final String MAP_URL = "file:///android_asset/simplemap.html";
+
+    ConnectionDetector cd;
+    AlertDialogManager alert = new AlertDialogManager();
+    GPSTracker gps;
+    WebPlaceFinder fp;
+
     class MainActivityJS
     {
         public void startSinglePlaceActivity(String id, double slat, double slng, double nlat, double nlng)
         {
             if (!cd.isConnectingToInternet()) {
-                alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                    "Please connect to Internet!", false);
+                alert.connectionError(MainActivity.this);
             }
             Log.d("Java log", "Marker: " + id + "Coordinates:" + slat + "\n" + slng + "\n" + nlat + "\n" + nlng + "\n");
             Intent in = new Intent(getApplicationContext(), SinglePlaceActivity.class);
@@ -50,40 +59,23 @@ public class MainActivity extends Activity {
             startActivity(in);
         }
 
-        public void searchPlaces(double lat, double lng, double slat, double slng, double nlat, double nlng) {
-            if (!cd.isConnectingToInternet()) {
-                alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                        "Please connect to Internet!", false);
-                return;
-            }
-            Log.d("Java log", "Coordinates:" + slat + "\n" + slng + "\n" + nlat + "\n" + nlng + "\n");
-            boolean result = fp.searchPlaces(lat, lng, menu, new LatLngBounds(slat, slng, nlat, nlng));
-            if (!result) {
-                String msg = isEnglish ? "Select places to search!" : "Выберите места для поиска!";
-                alert.showAlertDialog(MainActivity.this, "Error!",
-                        msg, false);
-            }
-        }
-
         public void notFound(String query) {
             String msg = isEnglish ? query + ": Nothing found!" : query + ": Ничего не найдено!";
             alert.showAlertDialog(MainActivity.this, "Information.",
                     msg, true);
 
         }
+
+        public void showSelectDialog(double lat, double lng, double slat, double slng, double nlat, double nlng) {
+            Log.d("Java log", "showSelectDialog:" + slat + "\n" + slng + "\n" + nlat + "\n" + nlng + "\n");
+            if (!cd.isConnectingToInternet()) {
+                alert.connectionError(MainActivity.this);
+                return;
+            }
+            alert.showSelectCategoryDialog(MainActivity.this, fp, lat, lng, new LatLngBounds(slat, slng, nlat, nlng));
+        }
     }
 
-    static WebView myWebView;
-    private Menu menu;
-    public static boolean isEnglish = true;
-
-    private static final String MAP_URL = "file:///android_asset/simplemap.html";
-
-    ConnectionDetector cd;
-    AlertDialogManager alert = new AlertDialogManager();
-    GPSTracker gps;
-    WebPlaceFinder fp;
-    
     @SuppressLint("JavascriptInterface")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +83,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         myWebView = (WebView)findViewById(R.id.mapview);
+        myWebView.loadUrl(MAP_URL);
+
         myWebView.getSettings().setJavaScriptEnabled(true);
         myWebView.clearHistory();
         myWebView.clearFormData();
@@ -113,7 +107,6 @@ public class MainActivity extends Activity {
             }
         });
 
-        myWebView.loadUrl(MAP_URL);
         myWebView.addJavascriptInterface(new MainActivityJS(), "ac");
 
         String strLang = Locale.getDefault().getDisplayLanguage();
@@ -129,8 +122,7 @@ public class MainActivity extends Activity {
         gps = new GPSTracker(this);
 
         if (!cd.isConnectingToInternet()) {
-            alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                    "Please connect to Internet!", false);
+            alert.connectionError(MainActivity.this);
         }
 
 
@@ -139,8 +131,6 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 fp.removeAll();
-                for (int i = 0; i < WebPlaceFinder.VENUES.length; i++)
-                    menu.getItem(i).setChecked(false);
                 return;
 
             }
@@ -151,8 +141,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (!cd.isConnectingToInternet()) {
-                    alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
-                            "Please connect to Internet!", false);
+                    alert.connectionError(MainActivity.this);
                     return;
                 }
                 if (gps.canGetLocation()) {
@@ -188,61 +177,17 @@ public class MainActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
       getMenuInflater().inflate(R.menu.main, menu);
-      this.menu = menu;
       return true;
     }
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-    	String query = null;
         switch(item.getItemId())
         {
+            case R.id.about:
+                break;
 
-        case R.id.hotel:
-        	query = WebPlaceFinder.HOTEL;
-            break;
-
-        case R.id.hostel:
-        	query = WebPlaceFinder.HOSTEL;
-            break;
-
-        case R.id.restaurant:
-        	query = WebPlaceFinder.RESTAURANT;
-            break;
-
-        case R.id.landmark:
-        	query = WebPlaceFinder.LANDMARK;
-            break;
-        case R.id.monument:
-            query = WebPlaceFinder.MONUMENT;
-            break;
-        case R.id.park:
-            query = WebPlaceFinder.PARK;
-            break;
-        case R.id.bridge:
-            query = WebPlaceFinder.BRIDGE;
-            break;
-        case R.id.minihotel:
-            query = WebPlaceFinder.MINI_HOTEL;
-            break;
         }
-
-        if(item.isChecked()) {
-        	fp.remove(query);
-            item.setChecked(false);
-        }
-        else {
-            String msg;
-            if (isEnglish) {
-                msg = "You choosed - ";
-            } else {
-                msg = "Вы выбрали - ";
-            }
-            Log.d("Java log", msg + query);
-            Toast.makeText(getApplicationContext(), msg + query, Toast.LENGTH_LONG).show();
-            item.setChecked(true);
-        }
-    	
         return true;
     }
 

@@ -2,55 +2,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.sbpmap.MainActivity" >
-    <group
-        android:checkableBehavior="all"
-        android:choiceMode="multipleChoice">
+    <group>
         <item
-            android:id="@+id/restaurant"
+            android:id="@+id/about"
             android:orderInCategory="100"
             android:showAsAction="never"
-            android:title="@string/restaurant" />
-
-        <item
-            android:id="@+id/hotel"
-            android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/hotel" />
-
-        <item
-            android:id="@+id/landmark"
-            android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/landmark" />
-
-        <item
-            android:id="@+id/hostel"
-            android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/hostel" />
-
-        <item
-            android:id="@+id/minihotel"
-            android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/minihotel" />
-
-        <item
-            android:id="@+id/monument"
-            android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/monument" />
-
-        <item
-            android:id="@+id/bridge"
-            android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/bridge" />
-
-        <item
-            android:id="@+id/park"
-            android:orderInCategory="100"
-            android:showAsAction="never"
-            android:title="@string/park" />
+            android:title="@string/about" />
     </group>
 </menu>

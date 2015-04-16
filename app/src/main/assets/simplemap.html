@@ -15,19 +15,45 @@
     <script type="text/javascript" src="infobox.js"></script>
     <script>
         var curPositionMarker = new google.maps.Marker();
-        var venues = ['Restaurant', 'Hotel', 'Landmark', 'Hostel', 'Mini-hotel', 'Monument', 'Bridge', 'Park'];
+        var venues = ['Restaurant', 'Hotel', 'Landmark', 'Hostel', 'Minihotel', 'Monument', 'Bridge', 'Park'];
         var markers = new Array();
         var infoBoxes = new Array();
 
         var map;
         var defLatLng = new google.maps.LatLng(59.92209, 30.32919);
 
+        function runIfNotDblClick(event) {
+            if(singleClick){
+                console.log("mapClicked");
+
+                var lat = event.latLng.lat();
+                var lng = event.latLng.lng();
+
+                var pt = new google.maps.LatLng(lat, lng);
+                map.setCenter(pt);
+                map.setZoom(15);
+
+                var bounds = map.getBounds();
+                var s = bounds.getSouthWest();
+                var n = bounds.getNorthEast();
+
+
+                ac.showSelectDialog(lat, lng, s.lat(), s.lng(), n.lat(), n.lng());
+            }
+        };
+
+        function clearSingleClick() {
+            singleClick = false;
+        };
+
+        singleClick = false;
+
         function init() {
             for (var i = 0, length = venues.length; i < length; i++) {
                 console.log(venues[i]);
                 markers[venues[i]] = []
                 infoBoxes[venues[i]] = []
-                }
+            }
         }
 
         function initialize() {
@@ -48,28 +74,18 @@
                 center: defLatLng,
                 disableDefaultUI: true,
                 zoomControl: true,
-                disableDoubleClickZoom: true,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
 
             map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
+            google.maps.event.addListener(map, 'click', function(event) {
+                singleClick = true;
+                setTimeout(runIfNotDblClick, 500, event);
+            });
+
             google.maps.event.addListener(map, 'dblclick', function(event) {
-                console.log("mapClicked");
-
-                var lat = event.latLng.lat();
-                var lng = event.latLng.lng();
-
-                var pt = new google.maps.LatLng(lat, lng);
-                map.setCenter(pt);
-                map.setZoom(15);
-
-                var bounds = map.getBounds();
-                var s = bounds.getSouthWest();
-                var n = bounds.getNorthEast();
-
-
-                ac.searchPlaces(lat, lng, s.lat(), s.lng(), n.lat(), n.lng());
+                 clearSingleClick();
             });
 
             console.log("End: initialize()");
@@ -190,7 +206,7 @@
 
 
             console.log("Search near");
-            ac.searchPlaces(lat, lng, s.lat(), s.lng(), n.lat(), n.lng());
+            ac.showSelectDialog(lat, lng, s.lat(), s.lng(), n.lat(), n.lng());
         }
 
         function clear(query) {
