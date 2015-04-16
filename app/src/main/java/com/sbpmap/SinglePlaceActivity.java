@@ -27,7 +27,6 @@ public class SinglePlaceActivity extends Activity{
 
 
 	  ProgressDialog pDialog;
-      AlertDialogManager alert = new AlertDialogManager();
 
 	  @Override
 	  protected void onCreate(Bundle savedInstanceState) {

@@ -73,7 +73,7 @@
                 zoom: 10,
                 center: defLatLng,
                 disableDefaultUI: true,
-                zoomControl: true,
+                zoomControl: false,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
 
@@ -102,7 +102,7 @@
                 return;
             }
             var opacity = 1 - alpha;
-            if (opacity < 0.1) {
+            if (opacity < 0.2) {
                     return;
                 }
             var location = new google.maps.LatLng(lat, lng);
@@ -126,19 +126,14 @@
             console.log(width);
             var myOptions = {
                  content: boxText
-                ,disableAutoPan: false
                 ,maxWidth: 0
                 ,pixelOffset: new google.maps.Size(-width, -52)
-                ,zIndex: null
                 ,boxStyle: {
                   background: "url('tipbox.gif') no-repeat"
                   ,opacity: opacity
                  }
                 ,closeBoxURL: ""
-                ,infoBoxClearance: new google.maps.Size(1, 1)
-                ,isHidden: false
-                ,pane: "floatPane"
-                ,enableEventPropagation: false
+                ,disableAutoPan: true
 		    };
 
 

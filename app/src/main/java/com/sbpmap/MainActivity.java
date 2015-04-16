@@ -8,6 +8,9 @@ import com.sbpmap.Utils.LatLngBounds;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.content.res.Configuration;
@@ -32,7 +35,6 @@ public class MainActivity extends Activity {
 
     WebView myWebView;
     public static boolean isEnglish = true;
-
     private static final String MAP_URL = "file:///android_asset/simplemap.html";
 
     ConnectionDetector cd;
@@ -82,32 +84,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        myWebView = (WebView)findViewById(R.id.mapview);
-        myWebView.loadUrl(MAP_URL);
-
-        myWebView.getSettings().setJavaScriptEnabled(true);
-        myWebView.clearHistory();
-        myWebView.clearFormData();
-        myWebView.clearCache(true);
-
-
-        myWebView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-            }
-        });
-
-        myWebView.setWebChromeClient(new WebChromeClient() {
-            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                Log.d("Java log", consoleMessage.message() + " — From line "
-                        + consoleMessage.lineNumber() + " of "
-                        + consoleMessage.sourceId());
-
-                return true;
-            }
-        });
-
-        myWebView.addJavascriptInterface(new MainActivityJS(), "ac");
+        final ProgressDialog progressBar = ProgressDialog.show(MainActivity.this,
+                isEnglish ? "SBPMap" : "Карта СПБ",
+                isEnglish ? "Loading" : "Загрузка" + "...");
 
         String strLang = Locale.getDefault().getDisplayLanguage();
         if (strLang.equalsIgnoreCase("русский")){
@@ -116,14 +95,51 @@ public class MainActivity extends Activity {
 
         cd = new ConnectionDetector(getApplicationContext());
 
-
-        fp = new WebPlaceFinder(MainActivity.this, myWebView, getAssets());
-
         gps = new GPSTracker(this);
 
         if (!cd.isConnectingToInternet()) {
             alert.connectionError(MainActivity.this);
         }
+
+        myWebView = (WebView)findViewById(R.id.mapview);
+        myWebView.loadUrl(MAP_URL);
+
+        myWebView.getSettings().setJavaScriptEnabled(true);
+        myWebView.clearHistory();
+        myWebView.clearFormData();
+        myWebView.clearCache(true);
+
+        myWebView.addJavascriptInterface(new MainActivityJS(), "ac");
+
+        myWebView.setWebViewClient(new WebViewClient() {
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                Log.i("Java log: ", "Processing webview url click...");
+                view.loadUrl(url);
+                return true;
+            }
+
+            public void onPageFinished(WebView view, String url) {
+                Log.i("Java log: ", "Finished loading URL: " + url);
+                if (progressBar.isShowing()) {
+                    progressBar.dismiss();
+                }
+            }
+
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                Log.e("Java log: ", "Error: " + description);
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                alertDialog.setTitle(isEnglish ? "Error" : "Ошибка");
+                alertDialog.setMessage(description);
+                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        return;
+                    }
+                });
+                alertDialog.show();
+            }
+        });
+
+        fp = new WebPlaceFinder(MainActivity.this, myWebView, getAssets());
 
 
         Button btnClean = (Button)this.findViewById(R.id.clean);
@@ -131,6 +147,10 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 fp.removeAll();
+                alert.showAlertDialog(MainActivity.this,
+                        isEnglish ? "Removing" : "Удаление",
+                        isEnglish ? "All objects are removed!" : "Все объекты удалены!",
+                        true);
                 return;
 
             }
@@ -153,8 +173,10 @@ public class MainActivity extends Activity {
                     return;
                 }
                 if (gps.getLatitude() == 0) {
-                    alert.showAlertDialog(MainActivity.this, "GPS Status",
-                            "Do not find satelites!",
+                    String title = isEnglish ? "GPS Status" : "GPS Статус";
+                    String msg = isEnglish ? "Incorrect GPS location" : "Неверная GPS локация";
+                    alert.showAlertDialog(MainActivity.this, title,
+                            msg,
                             false);
                     return;
                 }
@@ -185,6 +207,8 @@ public class MainActivity extends Activity {
         switch(item.getItemId())
         {
             case R.id.about:
+                Intent in = new Intent(getApplicationContext(), ActivityMain.class);
+                startActivity(in);
                 break;
 
         }

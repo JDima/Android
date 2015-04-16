@@ -15,6 +15,18 @@ import java.util.ArrayList;
 
 
 public class AlertDialogManager {
+
+    public static final String HOTEL = "Хотель";
+    public static final String HOSTEL = "Хостел";
+    public static final String MINI_HOTEL = "Миниотель";
+    public static final String LANDMARK = "Достопримечательность";
+    public static final String BRIDGE = "Мост";
+    public static final String PARK = "Парк";
+    public static final String MONUMENT = "Монумент";
+    public static final String RESTAURANT = "Рестаран";
+
+    public static final String[] RU_VENUES = {RESTAURANT, HOTEL, LANDMARK, HOSTEL, MINI_HOTEL, MONUMENT, BRIDGE, PARK};
+
 	 @SuppressWarnings("deprecation")
 	public static void showAlertDialog(Context context, String title, String message,
 	            Boolean status) {
@@ -51,7 +63,7 @@ public class AlertDialogManager {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(titleSelectCategory);
 
-        builder.setMultiChoiceItems(WebPlaceFinder.VENUES, null,
+        builder.setMultiChoiceItems(MainActivity.isEnglish ? WebPlaceFinder.VENUES : RU_VENUES, null,
                 new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int indexSelected,
