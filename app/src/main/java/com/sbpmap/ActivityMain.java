@@ -211,11 +211,10 @@ public class ActivityMain extends Activity implements MediaPlayer.OnCompletionLi
     {
         if (keyCode == KeyEvent.KEYCODE_BACK)
         {
-            //Log.d("SPARTA", "Back key pressed");
-            //boolean wantKill = m_app.onKey(Application.KEY_BACK);
-            //if (wantKill)
-            //		finish();
-            //return true;
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(intent);
+            return true;
         }
         boolean ret = super.onKeyDown(keyCode, evt);
         return ret;

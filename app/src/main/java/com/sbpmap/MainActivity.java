@@ -16,9 +16,11 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
@@ -233,6 +235,21 @@ public class MainActivity extends Activity {
         //outState.putDouble("lat", cameraPos.latitude);
         //outState.putDouble("lng", cameraPos.longitude);
 
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent evt)
+    {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                startActivity(intent);
+                return true;
+            case KeyEvent.KEYCODE_MENU:
+                return true;
+        }
+        boolean ret = super.onKeyDown(keyCode, evt);
+        return ret;
     }
 
     @Override
