@@ -15,6 +15,8 @@ import android.content.Intent;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -34,7 +36,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends ActionBarActivity {
 
     static WebView myWebView;
     public static boolean isEnglish = true;
@@ -108,7 +110,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
+        ab.setIcon(R.drawable.logo);
+
         setContentView(R.layout.activity_main);
+
 
         final ProgressDialog progressBar = ProgressDialog.show(MainActivity.this,
                 isEnglish ? "SBPMap" : "Карта СПБ",
