@@ -97,6 +97,13 @@ public class MainActivity extends Activity {
         }
     }
 
+    public void setLocale() {
+        String strLang = Locale.getDefault().getDisplayLanguage();
+        if (strLang.equalsIgnoreCase("русский")){
+            isEnglish = false;
+        }
+    }
+
     @SuppressLint("JavascriptInterface")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,10 +114,7 @@ public class MainActivity extends Activity {
                 isEnglish ? "SBPMap" : "Карта СПБ",
                 isEnglish ? "Loading" : "Загрузка" + "...");
 
-        String strLang = Locale.getDefault().getDisplayLanguage();
-        if (strLang.equalsIgnoreCase("русский")){
-            isEnglish = false;
-        }
+        setLocale();
 
         cd = new ConnectionDetector(getApplicationContext());
 
@@ -208,6 +212,9 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        setLocale();
+        cd = new ConnectionDetector(getApplicationContext());
+
     }
     
     @Override
@@ -224,6 +231,12 @@ public class MainActivity extends Activity {
                 Intent in = new Intent(getApplicationContext(), ActivityMain.class);
                 startActivity(in);
                 break;
+            case R.id.help:
+                alert.showAlertDialog(MainActivity.this,
+                        isEnglish ? "Help" : "Помощь",
+                        isEnglish ? "Click on the screen to search." : "Нажмите на экран для поиска.", R.drawable.help);
+                break;
+
 
         }
         return true;
