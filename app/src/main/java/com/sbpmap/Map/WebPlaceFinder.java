@@ -25,7 +25,7 @@ public class WebPlaceFinder {
 
     Map<String, ArrayList<PlaceFinder>> tasksList = new HashMap<>();
     Map<String, String> imgMarkers = new HashMap<>();
-
+    WebView myWebView;
 
     Context mContext;
     private AssetManager assetManager;
@@ -41,7 +41,8 @@ public class WebPlaceFinder {
 
     public static final String[] VENUES = {RESTAURANT, HOTEL, LANDMARK, HOSTEL, MINI_HOTEL, MONUMENT, BRIDGE, PARK};
 
-    public WebPlaceFinder(Context context, AssetManager assetManager) {
+    public WebPlaceFinder(Context context, WebView myWebView, AssetManager assetManager) {
+        this.myWebView = myWebView;
         mContext = context;
         for (String query : VENUES) {
             tasksList.put(query, new ArrayList<PlaceFinder>());
@@ -54,8 +55,17 @@ public class WebPlaceFinder {
         this.assetManager = assetManager;
     }
 
+    public void loadUrl(final String url) {
+        myWebView.post(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity.callWebView(url);
+            }
+        });
+    }
+
     public void searchPlaces(double lat, double lng, ArrayList<Integer> seletedItems, LatLngBounds curLatLngBounds) {
-        MainActivity.callWebView("javascript:mapZoom('" + lat +
+        loadUrl("javascript:mapZoom('" + lat +
                 "','" + lng + "')");
 
         for (int selectedItem : seletedItems) {
@@ -118,7 +128,7 @@ public class WebPlaceFinder {
     private void addMarkersToMap(ArrayList<Place> venues, String query, double locLat, double locLng) {
         if (venues != null) {
             for (Place fv : venues) {
-                MainActivity.callWebView("javascript:addMarker('" + fv.getLat() +
+                loadUrl("javascript:addMarker('" + fv.getLat() +
                         "','" + fv.getLng() +
                         "','" + locLat +
                         "','" + locLng +
@@ -127,13 +137,13 @@ public class WebPlaceFinder {
                         "','" + fv.getName()  +
                         "','" + imgMarkers.get(query) + "')");
             }
-            MainActivity.callWebView("javascript:isFound('" + query + "')");
+            loadUrl("javascript:isFound('" + query + "')");
         }
     }
 
     public void removeAll() {
         Log.d("Java log", "removeAll()");
-        MainActivity.callWebView("javascript:clearAll()");
+        loadUrl("javascript:clearAll()");
         for (Map.Entry<String, ArrayList<PlaceFinder> >  entry : tasksList.entrySet()) {
             ArrayList<PlaceFinder> placeFinders = entry.getValue();
             if (placeFinders != null) {
