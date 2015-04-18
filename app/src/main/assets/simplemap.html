@@ -5,7 +5,7 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <style>
-        html, body, #map-canvas {
+        html, body, #map {
             margin: 0;
             padding: 0;
             position: relative;
@@ -63,7 +63,6 @@
                 var s = bounds.getSouthWest();
                 var n = bounds.getNorthEast();
 
-
                 ac.showSelectDialog(lat, lng, s.lat(), s.lng(), n.lat(), n.lng());
             }
         };
@@ -103,7 +102,7 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
 
-            map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+            map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
             google.maps.event.addListener(map, 'click', function(event) {
                 singleClick = true;
@@ -277,7 +276,7 @@
     </script>
 </head>
 <body onload="initialize();">
-<div id="map-canvas">
+<div id="map">
     <div class="google-maps"></div>
 </div>
 </body>
