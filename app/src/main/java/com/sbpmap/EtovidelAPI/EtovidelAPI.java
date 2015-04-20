@@ -11,6 +11,7 @@ import com.sbpmap.Ostrovok.OstrovokAPI;
 import com.sbpmap.R;
 import com.sbpmap.SinglePlaceActivity;
 import com.sbpmap.Utils.HttpRequest;
+import com.sbpmap.Utils.LatLngBounds;
 import com.sbpmap.Utils.TextViewUtil;
 
 import org.apache.http.client.methods.HttpUriRequest;
@@ -26,7 +27,7 @@ public class EtovidelAPI implements API {
     private double lat;
     private double lng;
     private String query;
-
+    private LatLngBounds latLngBounds;
     private static final String ETOVIDEL_DB = "EtovidelDB/etovidel.json";
     private static final String ETOVIDEL = "http://www.etovidel.net/sights/city/saint-petersburg/id/";
     private AssetManager assetManager;
@@ -35,7 +36,8 @@ public class EtovidelAPI implements API {
         this.assetManager = assetManager;
     }
 
-    public EtovidelAPI(AssetManager assetManager, double lat, double lng) {
+    public EtovidelAPI(AssetManager assetManager, LatLngBounds latLngBounds, double lat, double lng) {
+        this.latLngBounds = latLngBounds;
         this.lat = lat;
         this.lng = lng;
         this.assetManager = assetManager;
@@ -56,7 +58,7 @@ public class EtovidelAPI implements API {
 
     @Override
     public ArrayList<Place> parseResponse(String response) {
-        return EtovidelParser.parseResponse(response, query);
+        return EtovidelParser.parseResponse(response, query, lat, lng, latLngBounds);
     }
 
     @Override

@@ -5,6 +5,7 @@ public class Place {
     private String name;
     private double lng;
     private double lat;
+    private double alpha;
 
     public String getId() {
         return id;
@@ -38,5 +39,12 @@ public class Place {
         this.lng = lng;
     }
 
+    public double getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(double alpha) {
+        this.alpha = alpha;
+    }
 }
 

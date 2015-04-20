@@ -2,6 +2,7 @@ package com.sbpmap.Restoclub;
 
 import com.sbpmap.Map.Place;
 import com.sbpmap.SinglePlaceActivity;
+import com.sbpmap.Utils.LatLngBounds;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,7 +39,7 @@ public class RestoclubParser {
         return src;
     }
 
-    public static ArrayList<Place> parseResponse(String response) {
+    public static ArrayList<Place> parseResponse(String response, double cenlat, double cenlng, LatLngBounds latLngBounds) {
         ArrayList<Place> temp = new ArrayList<Place>();
         try {
             JSONObject jsonObject = new JSONObject(response);
@@ -48,9 +49,17 @@ public class RestoclubParser {
                 Place poi = new Place();
                 try {
                     JSONObject jsonObject1 = jsonObject.getJSONObject((String) iter.next());
-                    poi.setName(jsonObject1.getString("name"));
                     poi.setLat(jsonObject1.getDouble("lat"));
                     poi.setLng(jsonObject1.getDouble("lng"));
+
+                    double alpha = LatLngBounds.getAlpha(poi.getLat(), poi.getLng(),
+                            cenlat, cenlng, latLngBounds);
+                    if (alpha < 0.2) {
+                        continue;
+                    }
+                    poi.setAlpha(alpha);
+
+                    poi.setName(jsonObject1.getString("name"));
                     poi.setId(jsonObject1.getString("id"));
                     temp.add(poi);
                 } catch (Exception e) {

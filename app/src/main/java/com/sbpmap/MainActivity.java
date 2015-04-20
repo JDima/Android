@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.ConsoleMessage;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -49,6 +50,7 @@ public class MainActivity extends ActionBarActivity {
 
     class MainActivityJS
     {
+        @JavascriptInterface
         public void startSinglePlaceActivity(String id, double slat, double slng, double nlat, double nlng)
         {
             if (!cd.isConnectingToInternet()) {
@@ -66,6 +68,7 @@ public class MainActivity extends ActionBarActivity {
             startActivity(in);
         }
 
+        @JavascriptInterface
         public void notFound(String query) {
             String queryMsg = isEnglish ? query : AlertDialogManager.RU_VENUES[Arrays.asList(WebPlaceFinder.VENUES).indexOf(query)];
             String msg = isEnglish ? queryMsg + ": Nothing found!" : queryMsg + ": Ничего не найдено!";
@@ -74,6 +77,7 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
+        @JavascriptInterface
         public void showSelectDialog(double lat, double lng, double slat, double slng, double nlat, double nlng) {
             Log.d("Java log", "showSelectDialog:" + slat + "\n" + slng + "\n" + nlat + "\n" + nlng + "\n");
             if (!cd.isConnectingToInternet()) {
@@ -82,6 +86,8 @@ public class MainActivity extends ActionBarActivity {
             }
             alert.showSelectCategoryDialog(MainActivity.this, fp, lat, lng, new LatLngBounds(slat, slng, nlat, nlng));
         }
+
+        @JavascriptInterface
         public void cleanMap() {
             fp.removeAll();
             alert.showAlertDialog(MainActivity.this,
@@ -90,6 +96,8 @@ public class MainActivity extends ActionBarActivity {
                     R.drawable.remove);
             return;
         }
+
+        @JavascriptInterface
         public void mapIsEmpty() {
             alert.showAlertDialog(MainActivity.this,
                     isEnglish ? "Removing" : "Удаление",
@@ -106,7 +114,6 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    @SuppressLint("JavascriptInterface")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,11 +123,6 @@ public class MainActivity extends ActionBarActivity {
         ab.setIcon(R.drawable.logo);
 
         setContentView(R.layout.activity_main);
-
-
-        final ProgressDialog progressBar = ProgressDialog.show(MainActivity.this,
-                isEnglish ? "SBPMap" : "Карта СПБ",
-                isEnglish ? "Loading" : "Загрузка" + "...");
 
         setLocale();
 
@@ -133,6 +135,11 @@ public class MainActivity extends ActionBarActivity {
         }
 
         myWebView = (WebView)findViewById(R.id.mapview);
+
+        final ProgressDialog progressBar = ProgressDialog.show(MainActivity.this,
+                isEnglish ? "SBPMap" : "Карта СПБ",
+                isEnglish ? "Loading" : "Загрузка" + "...");
+
         myWebView.loadUrl(MAP_URL);
 
         myWebView.getSettings().setJavaScriptEnabled(true);
@@ -140,18 +147,25 @@ public class MainActivity extends ActionBarActivity {
         myWebView.clearFormData();
         myWebView.clearCache(true);
 
-        myWebView.addJavascriptInterface(new MainActivityJS(), "ac");
+        myWebView.addJavascriptInterface(new MainActivityJS(), "mainactivity");
+        myWebView.addJavascriptInterface(new WebPlaceFinder.WebPlaceFinderJS(), "webplacefinder");
+        myWebView.setWebChromeClient(new WebChromeClient() {
+            public void onConsoleMessage(String message, int lineNumber, String sourceID) {
+                Log.d("MyApplication", message + " -- From line "
+                        + lineNumber + " of "
+                        + sourceID);
+            }
+        });
 
         myWebView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Log.i("Java log: ", "Processing webview url click...");
-                view.loadUrl(url);
+                Log.i("Java log: ", url);
                 return true;
             }
 
             public void onPageFinished(WebView view, String url) {
                 Log.i("Java log: ", "Finished loading URL: " + url);
-                if (progressBar.isShowing()) {
+                if ((progressBar != null) && progressBar.isShowing()) {
                     progressBar.dismiss();
                 }
             }
@@ -170,7 +184,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        fp = new WebPlaceFinder(MainActivity.this, getAssets());
+        fp = new WebPlaceFinder(MainActivity.this, myWebView, getAssets());
 
 
         Button btnClean = (Button)this.findViewById(R.id.clean);
@@ -298,6 +312,9 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public static void callWebView(final String query) {
+        myWebView.clearHistory();
+        myWebView.clearFormData();
+        myWebView.clearCache(true);
         myWebView.loadUrl(query);
     }
 

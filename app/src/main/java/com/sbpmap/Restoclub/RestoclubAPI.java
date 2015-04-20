@@ -75,7 +75,7 @@ public class RestoclubAPI implements API {
 
     @Override
     public ArrayList<Place> parseResponse(String response) {
-        return RestoclubParser.parseResponse(response);
+        return RestoclubParser.parseResponse(response, lat, lng, latLngBounds);
     }
 
     @Override

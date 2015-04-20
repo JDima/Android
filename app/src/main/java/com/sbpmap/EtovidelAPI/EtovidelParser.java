@@ -1,6 +1,7 @@
 package com.sbpmap.EtovidelAPI;
 
 import com.sbpmap.Map.Place;
+import com.sbpmap.Utils.LatLngBounds;
 
 import org.json.JSONArray;
 
@@ -22,7 +23,7 @@ public class EtovidelParser {
         return src;
     }
 
-    public static ArrayList<Place> parseResponse(String response, String query) {
+    public static ArrayList<Place> parseResponse(String response, String query, double cenlat, double cenlng, LatLngBounds latLngBounds) {
         ArrayList<Place> temp = new ArrayList<Place>();
         try {
             JSONArray jsonArray= new JSONArray(response);
@@ -31,10 +32,18 @@ public class EtovidelParser {
                 if (jsonArray.getJSONObject(i).getString("kind").equals(query)) {
                     Place poi = new Place();
 
-                    poi.setName(jsonArray.getJSONObject(i).getString("name"));
-                    poi.setId(query + jsonArray.getJSONObject(i).getString("id"));
                     poi.setLat(jsonArray.getJSONObject(i).getDouble("lat"));
                     poi.setLng(jsonArray.getJSONObject(i).getDouble("lng"));
+
+                    double alpha = LatLngBounds.getAlpha(poi.getLat(), poi.getLng(),
+                            cenlat, cenlng, latLngBounds);
+                    if (alpha < 0.2) {
+                        continue;
+                    }
+                    poi.setAlpha(alpha);
+
+                    poi.setName(jsonArray.getJSONObject(i).getString("name"));
+                    poi.setId(query + jsonArray.getJSONObject(i).getString("id"));
 
                     temp.add(poi);
                 }

@@ -1,6 +1,7 @@
 package com.sbpmap.Utils;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
@@ -105,7 +106,9 @@ public class AlertDialogManager {
                     AlertDialogManager.showAlertDialog(context, error,
                             notSelected, R.drawable.fail);
                 } else {
+                    fp.removeAll();
                     fp.searchPlaces(lat, lng, seletedItems, latLngBounds);
+
                     dialog.dismiss();
                 }
             }

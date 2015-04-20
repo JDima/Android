@@ -1,6 +1,9 @@
 package com.sbpmap.Ostrovok;
 
+import android.util.Log;
+
 import com.sbpmap.Map.Place;
+import com.sbpmap.Utils.LatLngBounds;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,7 +16,7 @@ import java.util.LinkedHashSet;
  * Created by JDima on 29/03/15.
  */
 public class OstrovokParser {
-    public static ArrayList<Place> parseResponse(String response, String query) {
+    public static ArrayList<Place> parseResponse(String response, String query, double cenlat, double cenlng, LatLngBounds latLngBounds) {
         ArrayList<Place> temp = new ArrayList<Place>();
         try {
             JSONArray jsonArray= new JSONArray(response);
@@ -22,10 +25,19 @@ public class OstrovokParser {
                 if (jsonArray.getJSONObject(i).getString("kind").equals(query)) {
                     Place poi = new Place();
 
-                    poi.setName(jsonArray.getJSONObject(i).getString("name"));
-                    poi.setId(query + jsonArray.getJSONObject(i).getString("id"));
                     poi.setLat(jsonArray.getJSONObject(i).getDouble("lat"));
                     poi.setLng(jsonArray.getJSONObject(i).getDouble("lng"));
+                    poi.setName(jsonArray.getJSONObject(i).getString("name"));
+
+                    double alpha = LatLngBounds.getAlpha(poi.getLat(), poi.getLng(),
+                                                         cenlat, cenlng, latLngBounds);
+                    Log.d("Java log:", "LatLngBounts: " + latLngBounds.getNorthlatitude() + "  "+latLngBounds.getNorthlongitude());
+                    if (alpha < 0.2) {
+                        continue;
+                    }
+                    poi.setAlpha(alpha);
+
+                    poi.setId(query + jsonArray.getJSONObject(i).getString("id"));
 
                     temp.add(poi);
                 }

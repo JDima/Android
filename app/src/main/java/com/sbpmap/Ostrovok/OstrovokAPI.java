@@ -11,6 +11,7 @@ import com.sbpmap.Map.API;
 import com.sbpmap.Map.Place;
 import com.sbpmap.R;
 import com.sbpmap.SinglePlaceActivity;
+import com.sbpmap.Utils.LatLngBounds;
 import com.sbpmap.Utils.TextViewUtil;
 
 import org.apache.http.client.methods.HttpUriRequest;
@@ -28,6 +29,7 @@ import java.util.Map;
 public class OstrovokAPI implements API {
     private double lat;
     private double lng;
+    private LatLngBounds latLngBounds;
     private String query;
     private String id;
     private static final String OSTROVOK_DB = "OstrovokDB/ostrovok.json";
@@ -53,7 +55,8 @@ public class OstrovokAPI implements API {
         }
     };
 
-    public OstrovokAPI(AssetManager assetManager, double lat, double lng) {
+    public OstrovokAPI(AssetManager assetManager, LatLngBounds latLngBounds, double lat, double lng) {
+        this.latLngBounds = latLngBounds;
         this.lat = lat;
         this.lng = lng;
         this.assetManager = assetManager;
@@ -81,7 +84,7 @@ public class OstrovokAPI implements API {
 
     @Override
     public ArrayList<Place> parseResponse(String response) {
-        return OstrovokParser.parseResponse(response, query);
+        return OstrovokParser.parseResponse(response, query, lat, lng, latLngBounds);
     }
 
     @Override
