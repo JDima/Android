@@ -22,16 +22,18 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/search_near"
-            android:background="@null"
-            android:layout_weight="2" />
+            android:layout_weight="2"
+            android:background="#ff426088"
+            android:textColor="#ffffffff" />
 
         <Button android:textStyle="bold"
             android:id="@+id/clean"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/clean"
-            android:background="@null"
-            android:layout_weight="2" />
+            android:background="#ff426088"
+            android:layout_weight="2"
+            android:textColor="#ffffffff" />
 
     </LinearLayout>
 

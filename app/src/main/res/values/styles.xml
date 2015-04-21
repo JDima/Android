@@ -4,7 +4,16 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+    <style name="AppBaseTheme" parent="@style/Base.Theme.AppCompat">
+        <item name="android:background">#ff21447d</item>
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:editTextColor">#ff21447d</item>
+        <item name="android:textColorPrimary">#ff21447d</item>
+        <item name="android:textColorSecondary">#ff21447d</item>
+        <item name="android:textColorTertiary">#ff21447d</item>
+        <item name="android:textColorPrimaryInverse">#ff21447d</item>
+        <item name="android:textColorSecondaryInverse">#ff21447d</item>
+        <item name="android:textColorTertiaryInverse">#ff21447d</item>
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -13,7 +22,9 @@
     </style>
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
+    <style name="MyActionBar" parent="AppBaseTheme">
+        <item name="android:background">#ff426088</item>
+        <item name="android:textColor">#ff21447d</item>
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 

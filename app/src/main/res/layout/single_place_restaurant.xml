@@ -3,16 +3,20 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scroll"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
     android:fillViewport="true"
+    android:background="#ffffff"
     android:scrollbars="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#ffffff"
         android:orientation="vertical">
         <!-- Name Label -->
         <TextView
+            android:background="#ff426088"
+            android:textColor="#ffffffff"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/textview_height"
             android:text="@string/name"
@@ -20,6 +24,8 @@
 
         <!--  Name Value -->
         <TextView
+            android:textColor="#ff21447d"
+            android:background="#ffffffff"
             android:id="@+id/res_name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -29,6 +35,8 @@
 
         <!-- Address Label -->
         <TextView
+            android:background="#ff426088"
+            android:textColor="#ffffffff"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/textview_height"
             android:text="@string/address"
@@ -36,6 +44,8 @@
 
         <!--  Address Value -->
         <TextView
+            android:textColor="#ff21447d"
+            android:background="#ffffffff"
             android:id="@+id/res_address"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -43,6 +53,8 @@
 
         <!-- Name Label -->
         <TextView
+            android:background="#ff426088"
+            android:textColor="#ffffffff"
             android:textStyle="bold"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/textview_height"
@@ -50,6 +62,8 @@
 
         <!--  Name Value -->
         <TextView
+            android:textColor="#ff21447d"
+            android:background="#ffffffff"
             android:id="@+id/res_phone"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -57,6 +71,8 @@
 
         <!-- Cost Label -->
         <TextView
+            android:background="#ff426088"
+            android:textColor="#ffffffff"
             android:textStyle="bold"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/textview_height"
@@ -64,6 +80,8 @@
 
         <!--  Cost Value -->
         <TextView
+            android:textColor="#ff21447d"
+            android:background="#ffffffff"
             android:id="@+id/res_bill"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -71,6 +89,8 @@
 
         <!-- Name Label -->
         <TextView
+            android:background="#ff426088"
+            android:textColor="#ffffffff"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/textview_height"
             android:text="@string/hours"
@@ -78,6 +98,8 @@
 
         <!--  Name Value -->
         <TextView
+            android:textColor="#ff21447d"
+            android:background="#ffffffff"
             android:id="@+id/res_hours"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

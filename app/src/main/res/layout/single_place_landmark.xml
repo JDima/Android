@@ -2,16 +2,20 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scroll"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
+    android:background="#ffffff"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top|center"
+        android:background="#ffffff"
         android:orientation="vertical">
         <!-- Name Label -->
         <TextView
+            android:background="#ff426088"
+            android:textColor="#ffffffff"
             android:textStyle="bold"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/textview_height"
@@ -19,6 +23,8 @@
 
         <!--  Name Value -->
         <TextView
+            android:textColor="#ff21447d"
+            android:background="#ffffffff"
             android:id="@+id/landmark_name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -28,6 +34,8 @@
 
         <!-- Address Label -->
         <TextView
+            android:background="#ff426088"
+            android:textColor="#ffffffff"
             android:textStyle="bold"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/textview_height"
@@ -35,6 +43,8 @@
 
         <!--  Adress Value -->
         <TextView
+            android:textColor="#ff21447d"
+            android:background="#ffffffff"
             android:id="@+id/landmark_address"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -42,6 +52,8 @@
 
         <!-- Definition Label -->
         <TextView
+            android:background="#ff426088"
+            android:textColor="#ffffffff"
             android:textStyle="bold"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/textview_height"
@@ -49,6 +61,8 @@
 
         <!--  Definition Value -->
         <TextView
+            android:textColor="#ff21447d"
+            android:background="#ffffffff"
             android:id="@+id/landmark_definition"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

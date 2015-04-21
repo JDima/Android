@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.View;
@@ -36,7 +37,6 @@ public class AlertDialogManager {
 
 
         alertDialog.setMessage(message);
-
         alertDialog.setIcon(icon);
 
         alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
@@ -128,7 +128,6 @@ public class AlertDialogManager {
                 dialog.dismiss();
             }
         });
-
     }
 
     public void connectionError(Context context) {

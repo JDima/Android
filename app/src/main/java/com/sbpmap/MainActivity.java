@@ -14,6 +14,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -109,6 +111,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         ActionBar ab = getSupportActionBar();
+        ab.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ff426088")));
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
         ab.setIcon(R.drawable.logo);
 
