@@ -51,8 +51,7 @@ public class MainActivity extends ActionBarActivity {
     class MainActivityJS
     {
         @JavascriptInterface
-        public void startSinglePlaceActivity(String id, double slat, double slng, double nlat, double nlng)
-        {
+        public void startSinglePlaceActivity(String id, double slat, double slng, double nlat, double nlng) {
             if (!cd.isConnectingToInternet()) {
                 alert.connectionError(MainActivity.this);
             }
@@ -66,15 +65,6 @@ public class MainActivity extends ActionBarActivity {
             in.putExtra(SinglePlaceActivity.VENUE_ID, id);
 
             startActivity(in);
-        }
-
-        @JavascriptInterface
-        public void notFound(String query) {
-            String queryMsg = isEnglish ? query : AlertDialogManager.RU_VENUES[Arrays.asList(WebPlaceFinder.VENUES).indexOf(query)];
-            String msg = isEnglish ? queryMsg + ": Nothing found!" : queryMsg + ": Ничего не найдено!";
-            alert.showAlertDialog(MainActivity.this, "Information.",
-                    msg, R.drawable.success);
-
         }
 
         @JavascriptInterface

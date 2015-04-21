@@ -31,7 +31,6 @@ public class OstrovokParser {
 
                     double alpha = LatLngBounds.getAlpha(poi.getLat(), poi.getLng(),
                                                          cenlat, cenlng, latLngBounds);
-                    Log.d("Java log:", "LatLngBounts: " + latLngBounds.getNorthlatitude() + "  "+latLngBounds.getNorthlongitude());
                     if (alpha < 0.2) {
                         continue;
                     }

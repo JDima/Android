@@ -63,7 +63,7 @@
                 console.log("mapClicked - bounds 1  " + map.getBounds());
                 var pt = new google.maps.LatLng(lat, lng);
                 map.setCenter(pt);
-                map.setZoom(16);
+                map.setZoom(15.5);
 
                 console.log("mapClicked - bounds 2  " + map.getBounds());
                 var bounds = map.getBounds();
@@ -136,19 +136,18 @@
             info_markers.push(info_marker);
         }
 
-        function addMarkers() {
-            var query = "";
+        function addMarkers(endquery) {
             for (var i = 0; i < info_markers.length; i++) {
                 var lat = info_markers[i].lat;
                 var lng = info_markers[i].lng;
                 var id = info_markers[i].id;
-                query = info_markers[i].query;
+                var query = info_markers[i].query;
                 var marker_name = info_markers[i].marker_name;
                 var alpha = info_markers[i].alpha;
                 var icon_name = info_markers[i].icon_name;
 
                 var location = new google.maps.LatLng(lat, lng);
-                console.log("addMarker(" + lat + ", " + lng + ") alpha - " + alpha);
+                //console.log("addMarker(" + lat + ", " + lng + ") alpha - " + alpha);
 
                 var marker = new google.maps.Marker({
                     position: location,
@@ -163,7 +162,7 @@
                 boxText.innerHTML = marker_name;
 
                 var width = 2.9 * boxText.innerHTML.length;
-                console.log(width);
+                //console.log(width);
                 var myOptions = {
                      content: boxText
                     ,maxWidth: 0
@@ -192,7 +191,7 @@
                 markers[query].push(marker);
                 infoBoxes[query].push(ib);
             }
-            webplacefinder.isEnded(query, info_markers.length)
+            webplacefinder.isEnded(endquery, info_markers.length)
             info_markers = [];
         }
 
@@ -265,12 +264,6 @@
             markers[query] = [];
             infoBoxes[query] = [];
             info_markers = [];
-        }
-
-        function isFound(query) {
-            if(!markers[query].length){
-                mainactivity.notFound(query);
-            }
         }
 
         function distance(lat1, lon1, lat2, lon2, unit) {

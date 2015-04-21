@@ -28,21 +28,27 @@ public class AlertDialogManager {
 
     public static final String[] RU_VENUES = {RESTAURANT, HOTEL, LANDMARK, HOSTEL, MINI_HOTEL, MONUMENT, BRIDGE, PARK};
 
-	 @SuppressWarnings("deprecation")
+	@SuppressWarnings("deprecation")
+    public static AlertDialog alertDialog(Context context, String title, String message, int icon) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        alertDialog.setTitle(title);
+
+
+        alertDialog.setMessage(message);
+
+        alertDialog.setIcon(icon);
+
+        alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        return alertDialog;
+    }
+
+
 	public static void showAlertDialog(Context context, String title, String message, int icon) {
-         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-
-         alertDialog.setTitle(title);
-
-
-         alertDialog.setMessage(message);
-
-         alertDialog.setIcon(icon);
-
-         alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
-             public void onClick(DialogInterface dialog, int which) {
-             }
-         });
+         AlertDialog alertDialog = alertDialog(context, title, message, icon);
          //alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
          alertDialog.show();
      }
