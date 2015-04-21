@@ -137,6 +137,9 @@ public class ActivityMain extends Activity implements MediaPlayer.OnCompletionLi
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        if (getIntent().getBooleanExtra("EXIT", false)) {
+            finish();
+        }
         //overridePendingTransition(0, 0);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         // No Status bar

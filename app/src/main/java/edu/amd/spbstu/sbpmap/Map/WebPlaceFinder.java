@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
@@ -15,6 +16,7 @@ import edu.amd.spbstu.sbpmap.EtovidelAPI.EtovidelAPI;
 
 import edu.amd.spbstu.sbpmap.MainActivity;
 import edu.amd.spbstu.sbpmap.Ostrovok.OstrovokAPI;
+import edu.amd.spbstu.sbpmap.R;
 import edu.amd.spbstu.sbpmap.Restoclub.RestoclubAPI;
 import edu.amd.spbstu.sbpmap.Utils.APIRequest;
 import edu.amd.spbstu.sbpmap.Utils.AlertDialogManager;
@@ -49,7 +51,7 @@ public class WebPlaceFinder {
 
     static public class WebPlaceFinderJS {
         @JavascriptInterface
-        public void isEnded(String query, int count) {
+        public static void isEnded(String query, int count) {
             Log.d("Java log", "Good: " + query + " Added: " + count);
             addIsFinished(query, count);
         }
@@ -98,7 +100,7 @@ public class WebPlaceFinder {
             Log.d("Java log", "addIsFinished " + sb.toString());
             if (!sb.toString().isEmpty()) {
                 Log.d("Java log", sb.toString());
-                alertDialog.setMessage(sb.toString().substring(0, sb.toString().length() - 2));
+                alertDialog.setMessage(sb.toString().substring(0, sb.toString().length() - 1));
                 alertDialog.show();
             }
         }
@@ -114,9 +116,9 @@ public class WebPlaceFinder {
     }
 
     void initProgressDialog() {
-        pDialog = new ProgressDialog(mContext, android.R.attr.progressBarStyleHorizontal);
-
+        pDialog = new ProgressDialog(mContext, R.style.CustomDialog);
         String msg = MainActivity.isEnglish ? "Searching ..." : "Поиск ...";
+
         pDialog.setMessage(msg);
         pDialog.setProgressStyle(pDialog.STYLE_HORIZONTAL);
         pDialog.setIndeterminate(false);
@@ -181,6 +183,8 @@ public class WebPlaceFinder {
             if (response != null) {
                 venues = api.parseResponse(response);
                 addMarkersToMap(venues, query, api.getLat(), api.getLng());
+            } else {
+                WebPlaceFinderJS.isEnded(query, -1);
             }
         }
     }

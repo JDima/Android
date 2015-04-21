@@ -6,14 +6,19 @@ import edu.amd.spbstu.sbpmap.Utils.ConnectionDetector;
 import edu.amd.spbstu.sbpmap.Utils.GPSTracker;
 import edu.amd.spbstu.sbpmap.Utils.LatLngBounds;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -31,6 +36,7 @@ import android.widget.Button;
 
 
 import java.util.Locale;
+import java.util.Map;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -38,6 +44,7 @@ public class MainActivity extends ActionBarActivity {
     static WebView myWebView;
     public static boolean isEnglish = true;
     private static final String MAP_URL = "file:///android_asset/simplemap.html";
+    ProgressDialog progressBar;
 
     ConnectionDetector cd;
     AlertDialogManager alert = new AlertDialogManager();
@@ -48,9 +55,6 @@ public class MainActivity extends ActionBarActivity {
     {
         @JavascriptInterface
         public void startSinglePlaceActivity(String id, double slat, double slng, double nlat, double nlng) {
-            if (!cd.isConnectingToInternet()) {
-                alert.connectionError(MainActivity.this);
-            }
             Log.d("Java log", "Marker: " + id + "Coordinates:" + slat + "\n" + slng + "\n" + nlat + "\n" + nlng + "\n");
             Intent in = new Intent(getApplicationContext(), SinglePlaceActivity.class);
 
@@ -66,10 +70,6 @@ public class MainActivity extends ActionBarActivity {
         @JavascriptInterface
         public void showSelectDialog(double lat, double lng, double slat, double slng, double nlat, double nlng) {
             Log.d("Java log", "showSelectDialog:" + slat + "\n" + slng + "\n" + nlat + "\n" + nlng + "\n");
-            if (!cd.isConnectingToInternet()) {
-                alert.connectionError(MainActivity.this);
-                return;
-            }
             alert.showSelectCategoryDialog(MainActivity.this, fp, lat, lng, new LatLngBounds(slat, slng, nlat, nlng));
         }
 
@@ -100,9 +100,50 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    void connectionErrorDialog() {
+        AlertDialog alertDialog = alert.connectionError(MainActivity.this);
+        alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("EXIT", true);
+                startActivity(intent);
+            }
+        });
+        Log.d("Java log", "connectionErrorDialog()");
+        alertDialog.show();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (progressBar!=null) {
+            if (progressBar.isShowing()) {
+                progressBar.dismiss();
+            }
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        //intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getExtras() != null) {
+                    if (!cd.isConnectingToInternet()) {
+                        connectionErrorDialog();
+                        return;
+                    } else {
+                        onStart();
+                    }
+                }
+
+            }
+        }, intentFilter);
 
         ActionBar ab = getSupportActionBar();
         ab.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ff426088")));
@@ -117,13 +158,9 @@ public class MainActivity extends ActionBarActivity {
 
         gps = new GPSTracker(this);
 
-        if (!cd.isConnectingToInternet()) {
-            alert.connectionError(MainActivity.this);
-        }
-
         myWebView = (WebView)findViewById(R.id.mapview);
 
-        final ProgressDialog progressBar = ProgressDialog.show(MainActivity.this,
+        progressBar = ProgressDialog.show(MainActivity.this,
                 isEnglish ? "SBPMap" : "Карта СПБ",
                 isEnglish ? "Loading" : "Загрузка" + "...");
 
@@ -162,7 +199,7 @@ public class MainActivity extends ActionBarActivity {
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
                 alertDialog.setTitle(isEnglish ? "Error" : "Ошибка");
                 alertDialog.setMessage(description);
-                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         return;
                     }
@@ -187,10 +224,6 @@ public class MainActivity extends ActionBarActivity {
         btnSearchNear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!cd.isConnectingToInternet()) {
-                    alert.connectionError(MainActivity.this);
-                    return;
-                }
                 if (gps.canGetLocation()) {
                /* alert.showAlertDialog(MainActivity.this, "GPS Status",
                         "latitude:" + gps.getLatitude() + ", longitude: " + gps.getLongitude(),
@@ -222,7 +255,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         setLocale();
-        cd = new ConnectionDetector(getApplicationContext());
+        //cd = new ConnectionDetector(getApplicationContext());
 
     }
     

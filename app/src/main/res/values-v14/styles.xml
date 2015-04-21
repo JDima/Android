@@ -15,5 +15,9 @@
         <item name="android:textColorSecondaryInverse">#ff21447d</item>
         <item name="android:textColorTertiaryInverse">#ff21447d</item>
     </style>
+    <style name="CustomDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:textColor">#ff21447d</item>
 
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
 </resources>

@@ -127,16 +127,16 @@ public class AlertDialogManager {
         });
     }
 
-    public void connectionError(Context context) {
+    public AlertDialog connectionError(Context context) {
         String title, msg;
         if (MainActivity.isEnglish) {
             title = "Internet Connection Error";
-            msg = "Please connect to Internet!";
+            msg = "Phone does not have internet connection. Application will be close!";
         } else {
             title = "Ошибка интернет соединения";
-            msg = "Подключитесь к интернету!";
+            msg = "Телефон не имеет подключения к интернету. Приложение будет закрыто!";
         }
-        AlertDialogManager.showAlertDialog(context, title,
+        return AlertDialogManager.alertDialog(context, title,
                 msg, R.drawable.fail);
     }
 }

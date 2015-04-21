@@ -130,10 +130,59 @@
                 id: id,
                 query: query,
                 marker_name: marker_name,
-                alpha: alpha,
+                alpha: parseFloat(alpha),
                 icon_name: icon_name
             };
             info_markers.push(info_marker);
+        }
+
+        function addMarker(lat, lng, id, query, marker_name, alpha, icon_name) {
+            var location = new google.maps.LatLng(lat, lng);
+            console.log("addMarker(" + lat + ", " + lng + ")" + "  " + id);
+
+            var marker = new google.maps.Marker({
+                position: location,
+                icon: "file:///android_asset/" + icon_name,
+                map: map,
+                opacity: alpha,
+                id: id
+            });
+
+            var boxText = document.createElement("div");
+            boxText.style.cssText = "border: 1px solid black; margin-top: 2px; background: #c4c3bc; padding: 2px;";
+            boxText.innerHTML = marker_name;
+
+            var width = 2.9 * boxText.innerHTML.length;
+            console.log(width);
+            var myOptions = {
+                 content: boxText
+                ,maxWidth: 0
+                ,pixelOffset: new google.maps.Size(-width, -52)
+                ,boxStyle: {
+                  background: "url('tipbox.gif') no-repeat"
+                  ,opacity: alpha
+                 }
+                ,closeBoxURL: ""
+                ,disableAutoPan: true
+		    };
+
+
+            var ib = new InfoBox(myOptions);
+		    ib.open(map, marker);
+
+
+            google.maps.event.addListener(marker, 'click', function(event) {
+                console.log("It is marker: " + marker.id );
+                var bounds = map.getBounds();
+                var s = bounds.getSouthWest();
+                var n = bounds.getNorthEast();
+
+                mainactivity.startSinglePlaceActivity(marker.id, s.lat(), s.lng(), n.lat(), n.lng());
+            });
+
+            marker.setMap(map)
+            markers[query].push(marker);
+            infoBoxes[query].push(ib);
         }
 
         function addMarkers(endquery) {
@@ -145,51 +194,7 @@
                 var marker_name = info_markers[i].marker_name;
                 var alpha = info_markers[i].alpha;
                 var icon_name = info_markers[i].icon_name;
-
-                var location = new google.maps.LatLng(lat, lng);
-                //console.log("addMarker(" + lat + ", " + lng + ") alpha - " + alpha);
-
-                var marker = new google.maps.Marker({
-                    position: location,
-                    icon: "file:///android_asset/" + icon_name,
-                    map: map,
-                    opacity: parseFloat(alpha),
-                    id: id
-                });
-
-                var boxText = document.createElement("div");
-                boxText.style.cssText = "border: 1px solid black; margin-top: 2px; background: #c4c3bc; padding: 2px;";
-                boxText.innerHTML = marker_name;
-
-                var width = 2.9 * boxText.innerHTML.length;
-                //console.log(width);
-                var myOptions = {
-                     content: boxText
-                    ,maxWidth: 0
-                    ,pixelOffset: new google.maps.Size(-width, -52)
-                    ,boxStyle: {
-                      background: "url('tipbox.gif') no-repeat"
-                      ,opacity: parseFloat(alpha)
-                     }
-                    ,closeBoxURL: ""
-                    ,disableAutoPan: true
-                };
-
-                var ib = new InfoBox(myOptions);
-                ib.open(map, marker);
-
-                google.maps.event.addListener(marker, 'click', function(event) {
-                    console.log("It is marker: " + marker.id );
-                    var bounds = map.getBounds();
-                    var s = bounds.getSouthWest();
-                    var n = bounds.getNorthEast();
-
-                    mainactivity.startSinglePlaceActivity(marker.id, s.lat(), s.lng(), n.lat(), n.lng());
-                });
-
-                marker.setMap(map)
-                markers[query].push(marker);
-                infoBoxes[query].push(ib);
+                addMarker(lat, lng, id, query, marker_name, alpha, icon_name);
             }
             webplacefinder.isEnded(endquery, info_markers.length)
             info_markers = [];

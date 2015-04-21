@@ -5,8 +5,7 @@
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="@style/Base.Theme.AppCompat">
-        <item name="android:background">#ff21447d</item>
-        <item name="android:textColor">#ffffffff</item>
+        <item name="android:textColor">#ff21447d</item>
         <item name="android:editTextColor">#ff21447d</item>
         <item name="android:textColorPrimary">#ff21447d</item>
         <item name="android:textColorSecondary">#ff21447d</item>
@@ -27,5 +26,9 @@
         <item name="android:textColor">#ff21447d</item>
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+    <style name="CustomDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:textColor">#ff21447d</item>
 
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
 </resources>
