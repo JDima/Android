@@ -3,8 +3,12 @@ package edu.amd.spbstu.sbpmap.Utils;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import edu.amd.spbstu.sbpmap.MainActivity;
 import edu.amd.spbstu.sbpmap.Map.WebPlaceFinder;
@@ -27,27 +31,33 @@ public class AlertDialogManager {
     public static final String[] RU_VENUES = {RESTAURANT, HOTEL, LANDMARK, HOSTEL, MINI_HOTEL, MONUMENT, BRIDGE, PARK};
 
 	@SuppressWarnings("deprecation")
-    public static AlertDialog alertDialog(Context context, String title, String message, int icon) {
-        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+    public AlertDialog alertDialog(Context context, String title, String message, int icon) {
+        QustomDialogBuilder qustomDialogBuilder = new QustomDialogBuilder(context);
+        qustomDialogBuilder.setTitle(title);
+        qustomDialogBuilder.setMessage(message);
+        qustomDialogBuilder.setIcon(icon);
 
-        alertDialog.setTitle(title);
-
-
-        alertDialog.setMessage(message);
-        alertDialog.setIcon(icon);
-
-        alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
+        AlertDialog dialog = qustomDialogBuilder.create();
+        dialog.setButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
             public void onClick(DialogInterface dialog, int which) {
+
             }
         });
-        return alertDialog;
+        return dialog;
     }
 
+    public void paintButtons(Button button) {
+        button.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ff426088")));
+        button.setTextColor(Color.parseColor("#ffffffff"));
+        button.setTypeface(null, Typeface.BOLD);
+    }
 
-	public static void showAlertDialog(Context context, String title, String message, int icon) {
-         AlertDialog alertDialog = alertDialog(context, title, message, icon);
-         //alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-         alertDialog.show();
+	public void showAlertDialog(Context context, String title, String message, int icon) {
+        AlertDialog alertDialog = alertDialog(context, title, message, icon);
+        alertDialog.show();
+
+        paintButtons(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE));
      }
 
     public void showSelectCategoryDialog(final Context context, final WebPlaceFinder fp, final double lat, final double lng, final LatLngBounds latLngBounds) {
@@ -65,7 +75,6 @@ public class AlertDialogManager {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(titleSelectCategory);
-
         builder.setMultiChoiceItems(MainActivity.isEnglish ? WebPlaceFinder.VENUES : RU_VENUES, null,
                 new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
@@ -106,7 +115,7 @@ public class AlertDialogManager {
             public void onClick(View v)
             {
                 if (seletedItems.isEmpty()) {
-                    AlertDialogManager.showAlertDialog(context, error,
+                    showAlertDialog(context, error,
                             notSelected, R.drawable.fail);
                 } else {
                     fp.removeAll();
@@ -116,7 +125,7 @@ public class AlertDialogManager {
                 }
             }
         });
-
+        paintButtons(dialog.getButton(AlertDialog.BUTTON_POSITIVE));
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -125,6 +134,7 @@ public class AlertDialogManager {
                 dialog.dismiss();
             }
         });
+        paintButtons(dialog.getButton(AlertDialog.BUTTON_NEGATIVE));
     }
 
     public AlertDialog connectionError(Context context) {
@@ -136,7 +146,7 @@ public class AlertDialogManager {
             title = "Ошибка интернет соединения";
             msg = "Телефон не имеет подключения к интернету. Приложение будет закрыто!";
         }
-        return AlertDialogManager.alertDialog(context, title,
+        return alertDialog(context, title,
                 msg, R.drawable.fail);
     }
 }

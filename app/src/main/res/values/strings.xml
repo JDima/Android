@@ -8,6 +8,7 @@
     <string name="help">Help</string>
     <string name="title_activity_title_bar">TitleBar</string>
     <string name="search_near">Search near</string>
+    <string name="ok">Ok</string>
 
     <string name="name">Name:</string>
     <string name="address">Address:</string>
@@ -53,5 +54,6 @@
 
 
     <string name="google_maps_key">AIzaSyAgoJlD7f1Id2t8cP9NueHgD6RbRmmvL-w</string>
+    <string name="alert_image_content_description">Alert Image</string>
 
 </resources>

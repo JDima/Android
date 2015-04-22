@@ -5,6 +5,7 @@ package edu.amd.spbstu.sbpmap.Map;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -21,6 +22,7 @@ import edu.amd.spbstu.sbpmap.Restoclub.RestoclubAPI;
 import edu.amd.spbstu.sbpmap.Utils.APIRequest;
 import edu.amd.spbstu.sbpmap.Utils.AlertDialogManager;
 import edu.amd.spbstu.sbpmap.Utils.LatLngBounds;
+import edu.amd.spbstu.sbpmap.Utils.QustomDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +39,7 @@ public class WebPlaceFinder {
     private AssetManager assetManager;
     private static Map<String, Integer> requestList = new HashMap<>();
     private static int requestCount;
-    private static AlertDialog alertDialog;
+    private static AlertDialogManager alert = new AlertDialogManager();
 
     public static final String HOTEL = "Hotel";
     public static final String HOSTEL = "Hostel";
@@ -49,9 +51,9 @@ public class WebPlaceFinder {
     public static final String RESTAURANT = "Restaurant";
     public static final String[] VENUES = {RESTAURANT, HOTEL, LANDMARK, HOSTEL, MINI_HOTEL, MONUMENT, BRIDGE, PARK};
 
-    static public class WebPlaceFinderJS {
+    public class WebPlaceFinderJS {
         @JavascriptInterface
-        public static void isEnded(String query, int count) {
+        public void isEnded(String query, int count) {
             Log.d("Java log", "Good: " + query + " Added: " + count);
             addIsFinished(query, count);
         }
@@ -71,15 +73,13 @@ public class WebPlaceFinder {
         this.assetManager = assetManager;
     }
 
-    synchronized protected static void addIsFinished(String query, int count) {
+    synchronized protected void addIsFinished(String query, int count) {
         requestList.put(query, count);
         pDialog.incrementProgressBy(1);
         Log.d("Java log", "addIsFinished: " + requestList.size() + " requestcount " + requestCount);
         if (requestList.size() == requestCount) {
             Log.d("Java log", "addIsFinished: All requests!");
             pDialog.dismiss();
-
-            alertDialog.setTitle(MainActivity.isEnglish ? "Search results" : "Результаты поиска");
 
             String nothing = MainActivity.isEnglish ? ": Nothing found!" : ": Ничего не найдено!";
             String error = MainActivity.isEnglish ? ": Request timeout!" : ": Исчерпано время запроса!";
@@ -100,8 +100,11 @@ public class WebPlaceFinder {
             Log.d("Java log", "addIsFinished " + sb.toString());
             if (!sb.toString().isEmpty()) {
                 Log.d("Java log", sb.toString());
-                alertDialog.setMessage(sb.toString().substring(0, sb.toString().length() - 1));
-                alertDialog.show();
+
+                alert.showAlertDialog(mContext,
+                        MainActivity.isEnglish ? "Results" : "Результаты",
+                        sb.toString().substring(0, sb.toString().length() - 1),
+                        edu.amd.spbstu.sbpmap.R.drawable.find);
             }
         }
     }
@@ -133,7 +136,8 @@ public class WebPlaceFinder {
     public void searchPlaces(double lat, double lng, ArrayList<Integer> seletedItems, LatLngBounds curLatLngBounds) {
         requestCount = seletedItems.size();
         initProgressDialog();
-        alertDialog = AlertDialogManager.alertDialog(mContext, "", "", edu.amd.spbstu.sbpmap.R.drawable.find);
+        //alertDialog = alert.alertDialog(mContext, "", "", edu.amd.spbstu.sbpmap.R.drawable.find);
+        Log.d("Java log:", "alertDialog()4");
         loadUrl("javascript:mapZoom('" + lat + "','" + lng + "')");
 
         //SystemClock.sleep(2000);
@@ -184,7 +188,7 @@ public class WebPlaceFinder {
                 venues = api.parseResponse(response);
                 addMarkersToMap(venues, query, api.getLat(), api.getLng());
             } else {
-                WebPlaceFinderJS.isEnded(query, -1);
+                addIsFinished(query, -1);
             }
         }
     }

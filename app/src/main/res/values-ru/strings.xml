@@ -6,6 +6,7 @@
     <string name="clean">Очистить</string>
     <string name="help">Помощь</string>
     <string name="search_near">Поиск рядом</string>
+    <string name="ok">Ок</string>
 
     <string name="name">Название места:</string>
     <string name="address">Адрес:</string>

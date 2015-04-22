@@ -1,10 +1,12 @@
 package edu.amd.spbstu.sbpmap;
 
 import edu.amd.spbstu.sbpmap.Map.WebPlaceFinder;
+import edu.amd.spbstu.sbpmap.Map.WebPlaceFinder.WebPlaceFinderJS;
 import edu.amd.spbstu.sbpmap.Utils.AlertDialogManager;
 import edu.amd.spbstu.sbpmap.Utils.ConnectionDetector;
 import edu.amd.spbstu.sbpmap.Utils.GPSTracker;
 import edu.amd.spbstu.sbpmap.Utils.LatLngBounds;
+import edu.amd.spbstu.sbpmap.Utils.QustomDialogBuilder;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -103,6 +105,7 @@ public class MainActivity extends ActionBarActivity {
     void connectionErrorDialog() {
         AlertDialog alertDialog = alert.connectionError(MainActivity.this);
         alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -171,8 +174,10 @@ public class MainActivity extends ActionBarActivity {
         myWebView.clearFormData();
         myWebView.clearCache(true);
 
+        fp = new WebPlaceFinder(MainActivity.this, myWebView, getAssets());
+
         myWebView.addJavascriptInterface(new MainActivityJS(), "mainactivity");
-        myWebView.addJavascriptInterface(new WebPlaceFinder.WebPlaceFinderJS(), "webplacefinder");
+        myWebView.addJavascriptInterface(fp.new WebPlaceFinderJS(), "webplacefinder");
         myWebView.setWebChromeClient(new WebChromeClient() {
             public void onConsoleMessage(String message, int lineNumber, String sourceID) {
                 Log.d("MyApplication", message + " -- From line "
@@ -207,9 +212,6 @@ public class MainActivity extends ActionBarActivity {
                 alertDialog.show();
             }
         });
-
-        fp = new WebPlaceFinder(MainActivity.this, myWebView, getAssets());
-
 
         Button btnClean = (Button)this.findViewById(R.id.clean);
         btnClean.setOnClickListener(new View.OnClickListener() {
