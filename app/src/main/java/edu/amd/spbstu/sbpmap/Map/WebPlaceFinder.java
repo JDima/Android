@@ -93,9 +93,13 @@ public class WebPlaceFinder {
         this.assetManager = assetManager;
     }
 
+    synchronized void incrementProgressDialog() {
+        pDialog.incrementProgressBy(1);
+    }
+
     synchronized protected void addIsFinished(String query, int count) {
         requestList.put(query, count);
-        pDialog.incrementProgressBy(1);
+        incrementProgressDialog();
         Log.d("Java log", "addIsFinished: " + requestList.size() + " requestcount " + requestCount);
         if (requestList.size() == requestCount) {
             Log.d("Java log", "addIsFinished: All requests!");
@@ -224,7 +228,7 @@ public class WebPlaceFinder {
     }
 
     private void addMarkersToMap(ArrayList<Place> venues, String query, double locLat, double locLng) {
-        pDialog.incrementProgressBy(1);
+        incrementProgressDialog();
         if (venues != null) {
             for (Place fv : venues) {
                 Log.d("Java log", "addMarkersToMap(): name - " + fv.getName() + " query " + query);
