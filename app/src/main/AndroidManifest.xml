@@ -29,6 +29,7 @@
 
         <activity
             android:name="edu.amd.spbstu.sbpmap.ActivityMain"
+            android:screenOrientation="portrait"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,6 +41,7 @@
 
             <activity
                 android:name="edu.amd.spbstu.sbpmap.SinglePlaceActivity"
+                android:screenOrientation="portrait"
                 android:label="@string/app_name"/>
 
 

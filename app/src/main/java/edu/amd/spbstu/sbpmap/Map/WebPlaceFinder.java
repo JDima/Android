@@ -130,6 +130,7 @@ public class WebPlaceFinder {
                     MainActivity.isEnglish ? "Results" : "Результаты",
                     sb.toString().substring(0, sb.toString().length() - 1),
                     edu.amd.spbstu.sbpmap.R.drawable.find, false);
+            initProgressDialog();
         }
     }
 
@@ -146,6 +147,7 @@ public class WebPlaceFinder {
         pDialog = new ProgressDialog(mContext, R.style.CustomDialog);
         String msg = MainActivity.isEnglish ? "Searching ..." : "Поиск ...";
         pDialog.setMessage(msg);
+        pDialog.setProgress(0);
         pDialog.setProgressStyle(pDialog.STYLE_HORIZONTAL);
         pDialog.setIndeterminate(false);
         pDialog.setCancelable(false);
@@ -157,8 +159,7 @@ public class WebPlaceFinder {
     public void searchPlaces(double lat, double lng, ArrayList<Integer> seletedItems, LatLngBounds curLatLngBounds) {
         requestCount = seletedItems.size();
 
-        pDialog.setProgress(0);
-        pDialog.setMax(2 * requestCount);
+        pDialog.setMax(requestCount);
         pDialog.show();
         TextView tv1 = (TextView) pDialog.findViewById(android.R.id.message);
         tv1.setTextColor(Color.parseColor("#ffffffff"));
@@ -221,7 +222,6 @@ public class WebPlaceFinder {
     }
 
     private void addMarkersToMap(ArrayList<Place> venues, String query, double locLat, double locLng) {
-        incrementProgressDialog();
         if (venues != null) {
             for (Place fv : venues) {
                 Log.d("Java log", "addMarkersToMap(): name - " + fv.getName() + " query " + query);
