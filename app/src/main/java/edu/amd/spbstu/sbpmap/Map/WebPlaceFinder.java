@@ -107,7 +107,8 @@ public class WebPlaceFinder {
             for (String key : requestList.keySet()) {
                 String queryMsg = MainActivity.isEnglish ? key : AlertDialogManager.RU_VENUES[Arrays.asList(WebPlaceFinder.VENUES).indexOf(key)];
                 if (requestList.get(key) != -1) {
-                    sb.append(queryMsg + " - " +  Integer.toString(requestList.get(key)) + " objects\n");
+                    sb.append(queryMsg + " - " +  Integer.toString(requestList.get(key)) +
+                             (MainActivity.isEnglish ? " objects" : " объектов") +  "\n");
                 } else {
                     sb.append("Request timeout!\n");
                 }

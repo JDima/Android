@@ -29,6 +29,6 @@
     <style name="CustomDialog" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:textColor">#ff21447d</item>
 
-        <item name="android:windowBackground">@android:color/transparent</item>
+
     </style>
 </resources>
