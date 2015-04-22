@@ -152,7 +152,6 @@
 
         function addMarker(lat, lng, id, query, marker_name, alpha, icon_name) {
             var location = new google.maps.LatLng(lat, lng);
-            console.log("addMarker(" + lat + ", " + lng + ")" + "  " + id);
 
             var marker = new google.maps.Marker({
                 position: location,
@@ -167,7 +166,6 @@
             boxText.innerHTML = marker_name;
 
             var width = 2.9 * boxText.innerHTML.length;
-            console.log(width);
             var myOptions = {
                  content: boxText
                 ,maxWidth: 0
@@ -200,17 +198,30 @@
         }
 
         function addMarkers(endquery) {
-            for (var i = 0; i < info_markers.length; i++) {
+            info_markers.sort(function(a,b){
+                var d1 = distance(a.lat, a.lng, search_latlng.lat(), search_latlng.lng());
+                var d2 = distance(b.lat, b.lng, search_latlng.lat(), search_latlng.lng());
+                return d1 - d2;
+                })
+
+            var addedQuery = [];
+
+            for (var i = 0; i < Math.min(info_markers.length, 20); i++) {
                 var lat = info_markers[i].lat;
                 var lng = info_markers[i].lng;
                 var id = info_markers[i].id;
                 var query = info_markers[i].query;
+                addedQuery.push(query);
+                console.log(query);
                 var marker_name = info_markers[i].marker_name;
                 var alpha = info_markers[i].alpha;
                 var icon_name = info_markers[i].icon_name;
                 addMarker(lat, lng, id, query, marker_name, alpha, icon_name);
             }
-            webplacefinder.isEnded(endquery, info_markers.length)
+
+            var jsonString = JSON.stringify(addedQuery);
+            console.log("addMarkers() " + jsonString);
+            webplacefinder.isMarkersAdded(jsonString);
             info_markers = [];
         }
 

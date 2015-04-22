@@ -26,6 +26,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import edu.amd.spbstu.sbpmap.EtovidelAPI.EtovidelAPI;
 
 import edu.amd.spbstu.sbpmap.MainActivity;
@@ -68,9 +71,39 @@ public class WebPlaceFinder {
 
     public class WebPlaceFinderJS {
         @JavascriptInterface
-        public void isEnded(String query, int count) {
-            Log.d("Java log", "Good: " + query + " Added: " + count);
-            addIsFinished(query, count);
+        public void isMarkersAdded(String addedQuery) {
+            Log.d("Java log", "isMarkersAdded: " + addedQuery);
+
+            try {
+                JSONArray streamer = new JSONArray(addedQuery);
+                for (int i = 0; i < streamer.length(); i++) {
+                    String query = streamer.getString(i);
+                    requestList.put(query, requestList.get(query) + 1);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for (String key : requestList.keySet()) {
+                String queryMsg = MainActivity.isEnglish ? key : AlertDialogManager.RU_VENUES[Arrays.asList(WebPlaceFinder.VENUES).indexOf(key)];
+                if (requestList.get(key) != -1) {
+                    sb.append(queryMsg + " - " +  Integer.toString(requestList.get(key)) +
+                            (MainActivity.isEnglish ? " objects" : " объектов") +  "\n");
+                } else {
+                    sb.append("Request timeout!\n");
+                }
+            }
+
+            requestList.clear();
+            Log.d("Java log", "addIsFinished " + sb.toString());
+            Log.d("Java log", sb.toString());
+            pDialog.dismiss();
+            alert.showAlertDialog(mContext,
+                    MainActivity.isEnglish ? "Results" : "Результаты",
+                    sb.toString().substring(0, sb.toString().length() - 1),
+                    edu.amd.spbstu.sbpmap.R.drawable.find, false);
+            initProgressDialog();
         }
     }
 
@@ -98,39 +131,7 @@ public class WebPlaceFinder {
         incrementProgressDialog();
         Log.d("Java log", "addIsFinished: " + requestList.size() + " requestcount " + requestCount);
         if (requestList.size() == requestCount) {
-            Log.d("Java log", "addIsFinished: All requests!");
-            pDialog.dismiss();
-
-            String nothing = MainActivity.isEnglish ? ": Nothing found!" : ": Ничего не найдено!";
-            String error = MainActivity.isEnglish ? ": Request timeout!" : ": Исчерпано время запроса!";
-            StringBuilder sb = new StringBuilder();
-            for (String key : requestList.keySet()) {
-                String queryMsg = MainActivity.isEnglish ? key : AlertDialogManager.RU_VENUES[Arrays.asList(WebPlaceFinder.VENUES).indexOf(key)];
-                if (requestList.get(key) != -1) {
-                    sb.append(queryMsg + " - " +  Integer.toString(requestList.get(key)) +
-                             (MainActivity.isEnglish ? " objects" : " объектов") +  "\n");
-                } else {
-                    sb.append("Request timeout!\n");
-                }
-                /*switch (requestList.get(key)) {
-                    case 0:
-                        sb.append(queryMsg + " - " +  Integer.toString(requestList.get(key)) + " objects\n");
-                        break;
-                    case -1:
-                        sb.append(queryMsg +  error + "\n");
-                        break;
-                }*/
-            }
-
-            requestList.clear();
-            Log.d("Java log", "addIsFinished " + sb.toString());
-            Log.d("Java log", sb.toString());
-
-            alert.showAlertDialog(mContext,
-                    MainActivity.isEnglish ? "Results" : "Результаты",
-                    sb.toString().substring(0, sb.toString().length() - 1),
-                    edu.amd.spbstu.sbpmap.R.drawable.find, false);
-            initProgressDialog();
+            loadUrl("javascript:addMarkers()");
         }
     }
 
@@ -233,7 +234,8 @@ public class WebPlaceFinder {
                         "','" + fv.getAlpha() +
                         "','" + imgMarkers.get(query) + "')");
             }
-            loadUrl("javascript:addMarkers('" + query +"')");
+            addIsFinished(query, 0);
+            //loadUrl("javascript:addMarkers('" + query +"')");
         }
     }
 
