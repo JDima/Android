@@ -66,10 +66,6 @@ public class WebPlaceFinder {
     public static final String RESTAURANT = "Restaurant";
     public static final String[] VENUES = {RESTAURANT, HOTEL, LANDMARK, HOSTEL, MINI_HOTEL, MONUMENT, BRIDGE, PARK};
 
-    public void returnPosition() {
-        loadUrl("javascript:lastPosition()");
-    }
-
     public class WebPlaceFinderJS {
         @JavascriptInterface
         public void isEnded(String query, int count) {
@@ -128,14 +124,12 @@ public class WebPlaceFinder {
 
             requestList.clear();
             Log.d("Java log", "addIsFinished " + sb.toString());
-            if (!sb.toString().isEmpty()) {
-                Log.d("Java log", sb.toString());
+            Log.d("Java log", sb.toString());
 
-                alert.showAlertDialog(mContext,
-                        MainActivity.isEnglish ? "Results" : "Результаты",
-                        sb.toString().substring(0, sb.toString().length() - 1),
-                        edu.amd.spbstu.sbpmap.R.drawable.find, false);
-            }
+            alert.showAlertDialog(mContext,
+                    MainActivity.isEnglish ? "Results" : "Результаты",
+                    sb.toString().substring(0, sb.toString().length() - 1),
+                    edu.amd.spbstu.sbpmap.R.drawable.find, false);
         }
     }
 
@@ -171,8 +165,7 @@ public class WebPlaceFinder {
         tv1.setBackgroundColor(Color.parseColor("#ff426088"));
 
         //alertDialog = alert.alertDialog(mContext, "", "", edu.amd.spbstu.sbpmap.R.drawable.find);
-        Log.d("Java log:", "alertDialog()4");
-        loadUrl("javascript:mapZoom('" + lat + "','" + lng + "')");
+        loadUrl("javascript:mapZoom()");
 
         //SystemClock.sleep(2000);
         for (int selectedItem : seletedItems) {

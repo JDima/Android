@@ -135,7 +135,6 @@ public class AlertDialogManager {
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fp.returnPosition();
                 dialog.dismiss();
             }
         });

@@ -44,23 +44,18 @@
         var infoBoxes = new Array();
         var info_markers =[]
         var defLatLng = new google.maps.LatLng(59.92209, 30.32919);
+
         var lastpt = defLatLng;
+        var search_latlng = defLatLng;
+
         var lastZoom = 10;
+        var search_zoom = 10;
+
         var map;
 
-        function mapZoom(lat, lng) {
-            lastpt = map.getCenter();
-            lastZoom = map.getZoom();
-            var pt = new google.maps.LatLng(lat, lng);
-
-            map.setCenter(pt);
+        function mapZoom() {
+            map.setCenter(search_latlng);
             map.setZoom(15);
-        }
-
-        function lastPosition() {
-             console.log("Return " + lastpt);
-             map.setCenter(lastpt);
-             map.setZoom(lastZoom);
         }
 
         function runIfNotDblClick(event) {
@@ -70,8 +65,14 @@
                 var lat = event.latLng.lat();
                 var lng = event.latLng.lng();
 
+                lastpt = map.getCenter();
+                lastZoom = map.getZoom();
+
                 console.log("mapClicked - bounds 1  " + map.getBounds());
                 var pt = new google.maps.LatLng(lat, lng);
+
+                search_latlng = event.latLng;
+
                 map.setCenter(pt);
                 map.setZoom(15.5);
 
@@ -79,7 +80,10 @@
                 var bounds = map.getBounds();
                 var s = bounds.getSouthWest();
                 var n = bounds.getNorthEast();
-                map.setZoom(15);
+
+                map.setZoom(lastZoom);
+                map.setCenter(lastpt);
+
                 mainactivity.showSelectDialog(lat, lng, s.lat(), s.lng(), n.lat(), n.lng());
             }
         };
@@ -257,6 +261,11 @@
                 infowindow.open(map,curPositionMarker);
             });
 
+            lastpt = map.getCenter();
+            lastZoom = map.getZoom();
+
+            search_latlng = new google.maps.LatLng(lat,lng);
+
             map.setCenter(pt);
             map.setZoom(15);
 
@@ -267,7 +276,8 @@
             lat = map.getCenter().lat();
             lng = map.getCenter().lng();
 
-
+            map.setZoom(lastZoom);
+            map.setCenter(lastpt);
 
             console.log("Search near");
             mainactivity.showSelectDialog(lat, lng, s.lat(), s.lng(), n.lat(), n.lng());
