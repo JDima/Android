@@ -310,6 +310,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        myWebView.saveState(outState);
         //outState.putDouble("lat", cameraPos.latitude);
         //outState.putDouble("lng", cameraPos.longitude);
 
@@ -333,25 +334,10 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+        myWebView.restoreState(savedInstanceState);
         //cameraPos = new LatLng(savedInstanceState.getDouble("lat"), savedInstanceState.getDouble("lng"));
         //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(cameraPos.latitude, cameraPos.longitude), 15));
 
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        int orientation = newConfig.orientation;
-
-        switch (orientation) {
-            case Configuration.ORIENTATION_LANDSCAPE:
-                // do what you want when user is in LANDSCAPE
-                break;
-
-            case Configuration.ORIENTATION_PORTRAIT:
-                // do what you want when user is in PORTRAIT
-                break;
-        }
     }
 
     public static void callWebView(final String query) {

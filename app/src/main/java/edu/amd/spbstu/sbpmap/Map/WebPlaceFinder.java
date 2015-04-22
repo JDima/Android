@@ -89,7 +89,7 @@ public class WebPlaceFinder {
         for (String venue : VENUES) {
             imgMarkers.put(venue, venue.toLowerCase() + ".png");
         }
-
+        initProgressDialog();
         this.assetManager = assetManager;
     }
 
@@ -151,25 +151,25 @@ public class WebPlaceFinder {
     void initProgressDialog() {
         pDialog = new ProgressDialog(mContext, R.style.CustomDialog);
         String msg = MainActivity.isEnglish ? "Searching ..." : "Поиск ...";
-
         pDialog.setMessage(msg);
         pDialog.setProgressStyle(pDialog.STYLE_HORIZONTAL);
         pDialog.setIndeterminate(false);
         pDialog.setCancelable(false);
-        pDialog.setProgress(0);
         pDialog.setIcon(R.drawable.find);
-        pDialog.setMax(2 * requestCount);
-        pDialog.show();
-        TextView tv1 = (TextView) pDialog.findViewById(android.R.id.message);
-        tv1.setTextColor(Color.parseColor("#ffffffff"));
-        tv1.setBackgroundColor(Color.parseColor("#ff426088"));
     }
 
 
 
     public void searchPlaces(double lat, double lng, ArrayList<Integer> seletedItems, LatLngBounds curLatLngBounds) {
         requestCount = seletedItems.size();
-        initProgressDialog();
+
+        pDialog.setProgress(0);
+        pDialog.setMax(2 * requestCount);
+        pDialog.show();
+        TextView tv1 = (TextView) pDialog.findViewById(android.R.id.message);
+        tv1.setTextColor(Color.parseColor("#ffffffff"));
+        tv1.setBackgroundColor(Color.parseColor("#ff426088"));
+
         //alertDialog = alert.alertDialog(mContext, "", "", edu.amd.spbstu.sbpmap.R.drawable.find);
         Log.d("Java log:", "alertDialog()4");
         loadUrl("javascript:mapZoom('" + lat + "','" + lng + "')");
