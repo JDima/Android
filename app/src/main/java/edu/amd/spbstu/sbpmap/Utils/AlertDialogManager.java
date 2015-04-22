@@ -31,10 +31,12 @@ public class AlertDialogManager {
     public static final String[] RU_VENUES = {RESTAURANT, HOTEL, LANDMARK, HOSTEL, MINI_HOTEL, MONUMENT, BRIDGE, PARK};
 
 	@SuppressWarnings("deprecation")
-    public AlertDialog alertDialog(Context context, String title, String message, int icon) {
-        QustomDialogBuilder qustomDialogBuilder = new QustomDialogBuilder(context);
+    public AlertDialog alertDialog(Context context, String title, String message, int icon, boolean isTable) {
+        QustomDialogBuilder qustomDialogBuilder = new QustomDialogBuilder(context, isTable);
         qustomDialogBuilder.setTitle(title);
-        qustomDialogBuilder.setMessage(message);
+        if (!isTable) {
+            qustomDialogBuilder.setMessage(message);
+        }
         qustomDialogBuilder.setIcon(icon);
 
         AlertDialog dialog = qustomDialogBuilder.create();
@@ -47,20 +49,23 @@ public class AlertDialogManager {
         return dialog;
     }
 
-    public void paintButtons(Button button) {
+    public static void paintButtons(Button button) {
         button.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ff426088")));
         button.setTextColor(Color.parseColor("#ffffffff"));
         button.setTypeface(null, Typeface.BOLD);
     }
 
-	public void showAlertDialog(Context context, String title, String message, int icon) {
-        AlertDialog alertDialog = alertDialog(context, title, message, icon);
-        alertDialog.show();
+	public AlertDialog showAlertDialog(Context context, String title, String message, int icon, boolean isTable) {
+        AlertDialog alertDialog = alertDialog(context, title, message, icon, isTable);
+        if (!isTable) {
+            alertDialog.show();
 
-        paintButtons(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE));
+            paintButtons(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE));
+        }
+        return alertDialog;
      }
 
-    public void showSelectCategoryDialog(final Context context, final WebPlaceFinder fp, final double lat, final double lng, final LatLngBounds latLngBounds) {
+    public AlertDialog showSelectCategoryDialog(final Context context, final WebPlaceFinder fp, final double lat, final double lng, final LatLngBounds latLngBounds) {
         final AlertDialog dialog;
         Log.d("Java log", "showSelectCategoryDialog()");
         final String notSelected, titleSelectCategory, error, search, cancel;
@@ -74,6 +79,7 @@ public class AlertDialogManager {
         final ArrayList<Integer> seletedItems = new ArrayList<>();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCustomTitle(View.inflate(context, R.layout.custom_dialog_title, null));
         builder.setTitle(titleSelectCategory);
         builder.setMultiChoiceItems(MainActivity.isEnglish ? WebPlaceFinder.VENUES : RU_VENUES, null,
                 new DialogInterface.OnMultiChoiceClickListener() {
@@ -116,7 +122,7 @@ public class AlertDialogManager {
             {
                 if (seletedItems.isEmpty()) {
                     showAlertDialog(context, error,
-                            notSelected, R.drawable.fail);
+                            notSelected, R.drawable.fail, false);
                 } else {
                     fp.removeAll();
                     fp.searchPlaces(lat, lng, seletedItems, latLngBounds);
@@ -126,15 +132,17 @@ public class AlertDialogManager {
             }
         });
         paintButtons(dialog.getButton(AlertDialog.BUTTON_POSITIVE));
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener()
-        {
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
+                fp.returnPosition();
                 dialog.dismiss();
             }
         });
         paintButtons(dialog.getButton(AlertDialog.BUTTON_NEGATIVE));
+
+        //dialog.getListView().setBackgroundColor(Color.parseColor("#ff426088"));
+        return dialog;
     }
 
     public AlertDialog connectionError(Context context) {
@@ -147,6 +155,6 @@ public class AlertDialogManager {
             msg = "Телефон не имеет подключения к интернету. Приложение будет закрыто!";
         }
         return alertDialog(context, title,
-                msg, R.drawable.fail);
+                msg, R.drawable.fail, false);
     }
 }

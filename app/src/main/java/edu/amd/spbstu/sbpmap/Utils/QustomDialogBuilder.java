@@ -26,10 +26,14 @@ public class QustomDialogBuilder extends AlertDialog.Builder{
 
     private TextView mMessage;
 
-    public QustomDialogBuilder(Context context) {
+    public QustomDialogBuilder(Context context, boolean isTable) {
         super(context);
 
-        mDialogView = View.inflate(context, R.layout.qustom_dialog_layout, null);
+        if (isTable) {
+            mDialogView = View.inflate(context, R.layout.qustom_table, null);
+        } else {
+            mDialogView = View.inflate(context, R.layout.qustom_dialog_layout, null);
+        }
         setView(mDialogView);
 
         mTitle = (TextView) mDialogView.findViewById(R.id.alertTitle);

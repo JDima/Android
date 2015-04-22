@@ -43,13 +43,13 @@ I should have probably just rewritten similar code, but i was feeling lazy. Mayb
 
             android:layout_marginStart="16dip"
             android:layout_marginEnd="16dip">
-            <ImageView android:id="@+id/icon"
+            <ImageView android:id="@+id/pb_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dip"
                 android:src="@null"
                 android:contentDescription="@string/alert_image_content_description"/>
-            <com.android.internal.widget.DialogTitle android:id="@+id/alertTitle"
+            <com.android.internal.widget.DialogTitle android:id="@+id/progress_dialog_title"
                 style="@android:style/TextAppearance.Holo.DialogWindowTitle"
                 android:textColor="#ffffff"
                 android:singleLine="true"
@@ -65,26 +65,25 @@ I should have probably just rewritten similar code, but i was feeling lazy. Mayb
             android:background="#ff426088" />
     </LinearLayout>
 
-    <LinearLayout android:id="@+id/contentPanel"
-        android:layout_width="match_parent"
+    <LinearLayout android:id="@+id/progressdialog"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
-        <TextView android:id="@+id/message"
-            android:textColor="#ff21447d"
-            android:layout_width="match_parent"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="8dip"
-            android:layout_marginLeft="16dip"
-            android:paddingBottom="8dip"
-            android:textIsSelectable="true"/>
+            android:layout_gravity="center_vertical"
+            android:layout_toLeftOf="@+id/textView1" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip"
+            android:id="@+id/progress_bar_msg"
+            />
+
     </LinearLayout>
-
-    <FrameLayout android:id="@+id/customPanel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-    </FrameLayout>
-
-
 </LinearLayout>

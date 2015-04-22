@@ -43,14 +43,24 @@
         var markers = new Array();
         var infoBoxes = new Array();
         var info_markers =[]
-
-        var map;
         var defLatLng = new google.maps.LatLng(59.92209, 30.32919);
+        var lastpt = defLatLng;
+        var lastZoom = 10;
+        var map;
 
         function mapZoom(lat, lng) {
+            lastpt = map.getCenter();
+            lastZoom = map.getZoom();
             var pt = new google.maps.LatLng(lat, lng);
+
             map.setCenter(pt);
             map.setZoom(15);
+        }
+
+        function lastPosition() {
+             console.log("Return " + lastpt);
+             map.setCenter(lastpt);
+             map.setZoom(lastZoom);
         }
 
         function runIfNotDblClick(event) {

@@ -7,9 +7,11 @@ import edu.amd.spbstu.sbpmap.Utils.ConnectionDetector;
 import edu.amd.spbstu.sbpmap.Utils.GPSTracker;
 import edu.amd.spbstu.sbpmap.Utils.LatLngBounds;
 import edu.amd.spbstu.sbpmap.Utils.QustomDialogBuilder;
+import edu.amd.spbstu.sbpmap.Utils.QustomProgressDialog;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,11 +32,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 import java.util.Locale;
@@ -52,6 +56,20 @@ public class MainActivity extends ActionBarActivity {
     AlertDialogManager alert = new AlertDialogManager();
     GPSTracker gps;
     WebPlaceFinder fp;
+
+
+    AlertDialog alertDialog;
+    AlertDialog connErroralertDialog;
+    public void showLoadingProgress(){
+        QustomProgressDialog qustomProgressDialog = new QustomProgressDialog(MainActivity.this,
+                                                                    ProgressDialog.STYLE_SPINNER);
+        qustomProgressDialog.setTitle(isEnglish ? "SBPMap" : "Карта СПБ");
+        qustomProgressDialog.setMessage((isEnglish ? "Loading map" : "Загрузка карты") + "...");
+        qustomProgressDialog.setIcon(R.drawable.logo);
+        alertDialog = qustomProgressDialog.create();
+        alertDialog.show();
+        AlertDialogManager.paintButtons(alertDialog.getButton(AlertDialog.BUTTON_POSITIVE));
+    }
 
     class MainActivityJS
     {
@@ -72,25 +90,25 @@ public class MainActivity extends ActionBarActivity {
         @JavascriptInterface
         public void showSelectDialog(double lat, double lng, double slat, double slng, double nlat, double nlng) {
             Log.d("Java log", "showSelectDialog:" + slat + "\n" + slng + "\n" + nlat + "\n" + nlng + "\n");
-            alert.showSelectCategoryDialog(MainActivity.this, fp, lat, lng, new LatLngBounds(slat, slng, nlat, nlng));
+            alertDialog = alert.showSelectCategoryDialog(MainActivity.this, fp, lat, lng, new LatLngBounds(slat, slng, nlat, nlng));
         }
 
         @JavascriptInterface
         public void cleanMap() {
             fp.removeAll();
-            alert.showAlertDialog(MainActivity.this,
+            alertDialog = alert.showAlertDialog(MainActivity.this,
                     isEnglish ? "Removing" : "Удаление",
                     isEnglish ? "All objects are removed!" : "Все объекты удалены!",
-                    R.drawable.remove);
+                    R.drawable.remove, false);
             return;
         }
 
         @JavascriptInterface
         public void mapIsEmpty() {
-            alert.showAlertDialog(MainActivity.this,
+            alertDialog = alert.showAlertDialog(MainActivity.this,
                     isEnglish ? "Removing" : "Удаление",
                     isEnglish ? "Map does not contain markers!" : "Карта не содержит маркеров!",
-                    R.drawable.remove);
+                    R.drawable.remove, false);
             return;
         }
     }
@@ -103,26 +121,32 @@ public class MainActivity extends ActionBarActivity {
     }
 
     void connectionErrorDialog() {
-        AlertDialog alertDialog = alert.connectionError(MainActivity.this);
-        alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
+        connErroralertDialog = alert.connectionError(MainActivity.this);
+        connErroralertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(getApplicationContext(), ActivityMain.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("EXIT", true);
+                connErroralertDialog.dismiss();
                 startActivity(intent);
             }
         });
         Log.d("Java log", "connectionErrorDialog()");
-        alertDialog.show();
+        connErroralertDialog.show();
+        AlertDialogManager.paintButtons(connErroralertDialog.getButton(AlertDialog.BUTTON_POSITIVE));
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (progressBar!=null) {
-            if (progressBar.isShowing()) {
-                progressBar.dismiss();
+        if (alertDialog!=null) {
+            if (alertDialog.isShowing()) {
+                alertDialog.dismiss();
+            }
+        }if (connErroralertDialog!=null) {
+            if (connErroralertDialog.isShowing()) {
+                connErroralertDialog.dismiss();
             }
         }
     }
@@ -132,7 +156,6 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        //intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
         registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -163,10 +186,7 @@ public class MainActivity extends ActionBarActivity {
 
         myWebView = (WebView)findViewById(R.id.mapview);
 
-        progressBar = ProgressDialog.show(MainActivity.this,
-                isEnglish ? "SBPMap" : "Карта СПБ",
-                isEnglish ? "Loading" : "Загрузка" + "...");
-
+        showLoadingProgress();
         myWebView.loadUrl(MAP_URL);
 
         myWebView.getSettings().setJavaScriptEnabled(true);
@@ -174,7 +194,7 @@ public class MainActivity extends ActionBarActivity {
         myWebView.clearFormData();
         myWebView.clearCache(true);
 
-        fp = new WebPlaceFinder(MainActivity.this, myWebView, getAssets());
+        fp = new WebPlaceFinder(MainActivity.this, this, myWebView, getAssets());
 
         myWebView.addJavascriptInterface(new MainActivityJS(), "mainactivity");
         myWebView.addJavascriptInterface(fp.new WebPlaceFinderJS(), "webplacefinder");
@@ -194,14 +214,14 @@ public class MainActivity extends ActionBarActivity {
 
             public void onPageFinished(WebView view, String url) {
                 Log.i("Java log: ", "Finished loading URL: " + url);
-                if ((progressBar != null) && progressBar.isShowing()) {
-                    progressBar.dismiss();
+                if ((alertDialog != null) && alertDialog.isShowing()) {
+                    alertDialog.dismiss();
                 }
             }
 
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 Log.e("Java log: ", "Error: " + description);
-                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                alertDialog = new AlertDialog.Builder(MainActivity.this).create();
                 alertDialog.setTitle(isEnglish ? "Error" : "Ошибка");
                 alertDialog.setMessage(description);
                 alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
@@ -210,6 +230,7 @@ public class MainActivity extends ActionBarActivity {
                     }
                 });
                 alertDialog.show();
+                AlertDialogManager.paintButtons(alertDialog.getButton(AlertDialog.BUTTON_POSITIVE));
             }
         });
 
@@ -237,9 +258,9 @@ public class MainActivity extends ActionBarActivity {
                 if (gps.getLatitude() == 0) {
                     String title = isEnglish ? "GPS Status" : "GPS Статус";
                     String msg = isEnglish ? "Incorrect GPS location" : "Неверная GPS локация";
-                    alert.showAlertDialog(MainActivity.this, title,
+                    alertDialog = alert.showAlertDialog(MainActivity.this, title,
                             msg,
-                            R.drawable.fail);
+                            R.drawable.fail, false);
                     return;
                 }
 
@@ -276,9 +297,9 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(in);
                 break;
             case R.id.help:
-                alert.showAlertDialog(MainActivity.this,
+                alertDialog = alert.showAlertDialog(MainActivity.this,
                         isEnglish ? "Help" : "Помощь",
-                        isEnglish ? "Click on the screen to search." : "Нажмите на экран для поиска.", R.drawable.help);
+                        isEnglish ? "Click on the screen to search." : "Нажмите на экран для поиска.", R.drawable.help, false);
                 break;
 
 
