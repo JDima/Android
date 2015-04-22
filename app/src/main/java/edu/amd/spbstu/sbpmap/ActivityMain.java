@@ -129,6 +129,7 @@ public class ActivityMain extends Activity implements MediaPlayer.OnCompletionLi
     // *************************************************
     AppIntro m_app;
     AppView				    m_appView;
+    boolean                 isNotStart = false;
 
 
     // *************************************************
@@ -139,6 +140,9 @@ public class ActivityMain extends Activity implements MediaPlayer.OnCompletionLi
         super.onCreate(savedInstanceState);
         if (getIntent().getBooleanExtra("EXIT", false)) {
             finish();
+        }
+        if (getIntent().getBooleanExtra("NOT_START", false)) {
+            isNotStart = true;
         }
         //overridePendingTransition(0, 0);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -184,8 +188,12 @@ public class ActivityMain extends Activity implements MediaPlayer.OnCompletionLi
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                Intent in = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(in);
+                if (!isNotStart) {
+                    Intent in = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(in);
+                } else {
+                    finish();
+                }
             }
         }, 5000);
     }
@@ -214,9 +222,7 @@ public class ActivityMain extends Activity implements MediaPlayer.OnCompletionLi
     {
         if (keyCode == KeyEvent.KEYCODE_BACK)
         {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            startActivity(intent);
+            finish();
             return true;
         }
         boolean ret = super.onKeyDown(keyCode, evt);

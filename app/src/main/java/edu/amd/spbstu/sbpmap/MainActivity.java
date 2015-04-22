@@ -310,6 +310,7 @@ public class MainActivity extends ActionBarActivity {
         {
             case R.id.about:
                 Intent in = new Intent(getApplicationContext(), ActivityMain.class);
+                in.putExtra("NOT_START", true);
                 startActivity(in);
                 break;
             case R.id.help:
