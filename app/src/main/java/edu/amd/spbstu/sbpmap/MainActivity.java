@@ -50,6 +50,7 @@ public class MainActivity extends ActionBarActivity {
     static WebView myWebView;
     public static boolean isEnglish = true;
     private static final String MAP_URL = "file:///android_asset/simplemap.html";
+    private BroadcastReceiver broadcastReceiver;
     ProgressDialog progressBar;
 
     ConnectionDetector cd;
@@ -138,17 +139,19 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
+    protected  void onDestroy() {
+        unregisterReceiver(broadcastReceiver);
+        super.onDestroy();
+    }
+
+    @Override
     protected void onStop() {
-        super.onStop();
-        if (alertDialog!=null) {
-            if (alertDialog.isShowing()) {
-                alertDialog.dismiss();
-            }
-        }if (connErroralertDialog!=null) {
+        if (connErroralertDialog!=null) {
             if (connErroralertDialog.isShowing()) {
                 connErroralertDialog.dismiss();
             }
         }
+        super.onStop();
     }
 
     @Override
@@ -156,11 +159,17 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(new BroadcastReceiver() {
+
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getExtras() != null) {
                     if (!cd.isConnectingToInternet()) {
+                        if (alertDialog!=null) {
+                            if (alertDialog.isShowing()) {
+                                alertDialog.dismiss();
+                            }
+                        }
                         connectionErrorDialog();
                         return;
                     } else {
@@ -169,7 +178,9 @@ public class MainActivity extends ActionBarActivity {
                 }
 
             }
-        }, intentFilter);
+        };
+
+        registerReceiver(broadcastReceiver, intentFilter);
 
         ActionBar ab = getSupportActionBar();
         ab.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ff426088")));
@@ -216,6 +227,11 @@ public class MainActivity extends ActionBarActivity {
                 Log.i("Java log: ", "Finished loading URL: " + url);
                 if ((alertDialog != null) && alertDialog.isShowing()) {
                     alertDialog.dismiss();
+                    alertDialog = alert.showAlertDialog(MainActivity.this,
+                            isEnglish ? "Start" : "Начало",
+                            isEnglish ? "Click on the screen to search." : "Нажмите на экран для поиска.", R.drawable.help, false);
+
+
                 }
             }
 
