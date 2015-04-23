@@ -234,7 +234,7 @@ public class MainActivity extends ActionBarActivity {
                     alertDialog.dismiss();
                     alertDialog = alert.showAlertDialog(MainActivity.this,
                             isEnglish ? "Start" : "Начало",
-                            isEnglish ? "Click on the screen to search." : "Нажмите на экран для поиска.", R.drawable.help, false);
+                            isEnglish ? "Click on the screen to search." : "Нажмите на экран для поиска.", R.drawable.success, false);
                 }
             }
 
