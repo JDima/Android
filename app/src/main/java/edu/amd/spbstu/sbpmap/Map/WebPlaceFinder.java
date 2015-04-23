@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -42,6 +44,7 @@ public class WebPlaceFinder {
     private static Map<String, Integer> requestList = new HashMap<>();
     private static int requestCount;
     private static AlertDialogManager alert = new AlertDialogManager();
+    private Handler handler;
 
     public static final String HOTEL = "Hotel";
     public static final String HOSTEL = "Hostel";
@@ -79,14 +82,20 @@ public class WebPlaceFinder {
             }
 
             requestList.clear();
-            Log.d("Java log", "addIsFinished " + sb.toString());
-            Log.d("Java log", sb.toString());
-            pDialog.dismiss();
+            Log.d("Java log", "isMarkersAdded() " + sb.toString());
+            /*pDialog.dismiss();
             alert.showAlertDialog(mContext,
                     MainActivity.isEnglish ? "Results" : "Результаты",
                     sb.toString().substring(0, sb.toString().length() - 1),
-                    edu.amd.spbstu.sbpmap.R.drawable.find, false);
-            initProgressDialog();
+                    edu.amd.spbstu.sbpmap.R.drawable.find, false);*/
+
+            Message msg = new Message();
+            msg.obj = sb.toString().substring(0, sb.toString().length() - 1);
+            handler.sendMessage(msg);
+
+            Log.d("Java log", "isMarkersAdded() -initProgressDialog start ");
+            //initProgressDialog();
+            Log.d("Java log", "isMarkersAdded() -initProgressDialog end ");
         }
     }
 
@@ -100,7 +109,6 @@ public class WebPlaceFinder {
         for (String venue : VENUES) {
             imgMarkers.put(venue, venue.toLowerCase() + ".png");
         }
-        initProgressDialog();
         this.assetManager = assetManager;
     }
 
@@ -142,8 +150,22 @@ public class WebPlaceFinder {
     public void searchPlaces(double lat, double lng, ArrayList<Integer> seletedItems, LatLngBounds curLatLngBounds) {
         requestCount = seletedItems.size();
 
+        initProgressDialog();
+
         pDialog.setMax(requestCount);
         pDialog.show();
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                pDialog.dismiss();
+                String text = (String) msg.obj;
+                alert.showAlertDialog(mContext,
+                        MainActivity.isEnglish ? "Results" : "Результаты",
+                        text,
+                        edu.amd.spbstu.sbpmap.R.drawable.find, false);
+                //initProgressDialog();
+            }
+        };
         TextView tv1 = (TextView) pDialog.findViewById(android.R.id.message);
         tv1.setTextColor(Color.parseColor("#ffffffff"));
         tv1.setBackgroundColor(Color.parseColor("#ff426088"));
