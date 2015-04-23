@@ -1,10 +1,10 @@
 package edu.amd.spbstu.sbpmap.Utils;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
+
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
+
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;

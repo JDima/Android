@@ -1,17 +1,14 @@
 package edu.amd.spbstu.sbpmap;
 
 import edu.amd.spbstu.sbpmap.Map.WebPlaceFinder;
-import edu.amd.spbstu.sbpmap.Map.WebPlaceFinder.WebPlaceFinderJS;
 import edu.amd.spbstu.sbpmap.Utils.AlertDialogManager;
 import edu.amd.spbstu.sbpmap.Utils.ConnectionDetector;
 import edu.amd.spbstu.sbpmap.Utils.GPSTracker;
 import edu.amd.spbstu.sbpmap.Utils.LatLngBounds;
-import edu.amd.spbstu.sbpmap.Utils.QustomDialogBuilder;
 import edu.amd.spbstu.sbpmap.Utils.QustomProgressDialog;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
+
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,7 +16,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.content.IntentFilter;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
@@ -32,17 +28,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import android.view.View;
-import android.view.WindowManager;
+
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.TextView;
+
 
 
 import java.util.Locale;
-import java.util.Map;
+
 
 
 public class MainActivity extends ActionBarActivity {
@@ -51,6 +47,7 @@ public class MainActivity extends ActionBarActivity {
     public static boolean isEnglish = true;
     private static final String MAP_URL = "file:///android_asset/simplemap.html";
     private BroadcastReceiver broadcastReceiver;
+    private LocaleChangeReceiver localeBroadcastReceiver;
     ProgressDialog progressBar;
 
     ConnectionDetector cd;
@@ -70,6 +67,14 @@ public class MainActivity extends ActionBarActivity {
         alertDialog = qustomProgressDialog.create();
         alertDialog.show();
         AlertDialogManager.paintButtons(alertDialog.getButton(AlertDialog.BUTTON_POSITIVE));
+    }
+
+    public class LocaleChangeReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setLocale();
+        }
     }
 
     class MainActivityJS
@@ -101,7 +106,6 @@ public class MainActivity extends ActionBarActivity {
                     isEnglish ? "Removing" : "Удаление",
                     isEnglish ? "All objects are removed!" : "Все объекты удалены!",
                     R.drawable.remove, false);
-            return;
         }
 
         @JavascriptInterface
@@ -110,7 +114,6 @@ public class MainActivity extends ActionBarActivity {
                     isEnglish ? "Removing" : "Удаление",
                     isEnglish ? "Map does not contain markers!" : "Карта не содержит маркеров!",
                     R.drawable.remove, false);
-            return;
         }
     }
 
@@ -141,6 +144,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected  void onDestroy() {
         unregisterReceiver(broadcastReceiver);
+        unregisterReceiver(localeBroadcastReceiver);
         super.onDestroy();
     }
 
@@ -171,7 +175,6 @@ public class MainActivity extends ActionBarActivity {
                             }
                         }
                         connectionErrorDialog();
-                        return;
                     } else {
                         onStart();
                     }
@@ -179,8 +182,10 @@ public class MainActivity extends ActionBarActivity {
 
             }
         };
+        localeBroadcastReceiver = new LocaleChangeReceiver();
 
         registerReceiver(broadcastReceiver, intentFilter);
+        registerReceiver(localeBroadcastReceiver, new IntentFilter(Intent.ACTION_LOCALE_CHANGED));
 
         ActionBar ab = getSupportActionBar();
         ab.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ff426088")));
@@ -205,7 +210,7 @@ public class MainActivity extends ActionBarActivity {
         myWebView.clearFormData();
         myWebView.clearCache(true);
 
-        fp = new WebPlaceFinder(MainActivity.this, this, myWebView, getAssets());
+        fp = new WebPlaceFinder(MainActivity.this, myWebView, getAssets());
 
         myWebView.addJavascriptInterface(new MainActivityJS(), "mainactivity");
         myWebView.addJavascriptInterface(fp.new WebPlaceFinderJS(), "webplacefinder");
@@ -230,8 +235,6 @@ public class MainActivity extends ActionBarActivity {
                     alertDialog = alert.showAlertDialog(MainActivity.this,
                             isEnglish ? "Start" : "Начало",
                             isEnglish ? "Click on the screen to search." : "Нажмите на экран для поиска.", R.drawable.help, false);
-
-
                 }
             }
 
@@ -242,7 +245,6 @@ public class MainActivity extends ActionBarActivity {
                 alertDialog.setMessage(description);
                 alertDialog.setButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        return;
                     }
                 });
                 alertDialog.show();
@@ -264,9 +266,6 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 if (gps.canGetLocation()) {
-               /* alert.showAlertDialog(MainActivity.this, "GPS Status",
-                        "latitude:" + gps.getLatitude() + ", longitude: " + gps.getLongitude(),
-                        false);*/
                 } else {
                     gps.showSettingsAlert();
                     return;
@@ -294,8 +293,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         setLocale();
-        //cd = new ConnectionDetector(getApplicationContext());
-
     }
     
     @Override
@@ -328,8 +325,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         myWebView.saveState(outState);
-        //outState.putDouble("lat", cameraPos.latitude);
-        //outState.putDouble("lng", cameraPos.longitude);
 
     }
 
@@ -344,17 +339,13 @@ public class MainActivity extends ActionBarActivity {
             case KeyEvent.KEYCODE_MENU:
                 return true;
         }
-        boolean ret = super.onKeyDown(keyCode, evt);
-        return ret;
+        return super.onKeyDown(keyCode, evt);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         myWebView.restoreState(savedInstanceState);
-        //cameraPos = new LatLng(savedInstanceState.getDouble("lat"), savedInstanceState.getDouble("lng"));
-        //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(cameraPos.latitude, cameraPos.longitude), 15));
-
     }
 
     public static void callWebView(final String query) {

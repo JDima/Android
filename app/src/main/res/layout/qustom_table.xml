@@ -50,7 +50,6 @@ I should have probably just rewritten similar code, but i was feeling lazy. Mayb
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dip"
-                android:contentDescription="@string/alert_image_content_description"
                 android:src="@null" />
 
             <com.android.internal.widget.DialogTitle
@@ -76,8 +75,7 @@ I should have probably just rewritten similar code, but i was feeling lazy. Mayb
     <TableLayout
         android:id="@+id/result_table"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"></TableLayout>
+        android:layout_height="wrap_content"></TableLayout>
 
 
 </LinearLayout>

@@ -28,7 +28,7 @@ class V2d
 {
     // Data
     public	int	 x, y;
-};
+}
 
 
 public class AppIntro
@@ -256,15 +256,9 @@ public class AppIntro
     {
         ConnectivityManager cm = (ConnectivityManager)m_ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         // test for connection
-        if (cm.getActiveNetworkInfo() != null
+        return cm.getActiveNetworkInfo() != null
                 && cm.getActiveNetworkInfo().isAvailable()
-                && cm.getActiveNetworkInfo().isConnected())
-        {
-            return true;
-        } else
-        {
-            return false;
-        }
+                && cm.getActiveNetworkInfo().isConnected();
     }
 
 

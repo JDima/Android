@@ -26,7 +26,7 @@ public class HttpRequest {
 		    InputStream is = response.getEntity().getContent();
 		    BufferedInputStream bis = new BufferedInputStream(is);
 		    ByteArrayBuffer baf = new ByteArrayBuffer(20);
-		    int current = 0;
+		    int current;
 		    while ((current = bis.read()) != -1) {
 		    	baf.append((byte) current);
 		    }
@@ -38,7 +38,7 @@ public class HttpRequest {
 	}
 
     public static String gerSourcePage(String url) {
-        URL site = null;
+        URL site;
         StringBuilder sb = new StringBuilder();
         try {
             site = new URL(url);

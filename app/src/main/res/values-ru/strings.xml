@@ -2,11 +2,9 @@
 <resources>
 
     <string name="app_name">Карта СПБ</string>
-    <string name="action_settings">Настройки</string>
     <string name="clean">Очистить</string>
     <string name="help">Помощь</string>
     <string name="search_near">Поиск рядом</string>
-    <string name="ok">Ок</string>
 
     <string name="select_categories">Выберите категории</string>
 
@@ -19,15 +17,6 @@
     <string name="definition">Описание:</string>
     <string name="price_include">В цену включено:</string>
 
-    <string name="restaurant">Рестораны</string>
-    <string name="hotel">Отели</string>
-    <string name="landmark">Достопримечательности</string>
-    <string name="places">Места</string>
-    <string name="hostel">Хостел</string>
-    <string name="minihotel">Мини-отели</string>
-    <string name="bridge">Мосты</string>
-    <string name="park">Парки</string>
-    <string name="monument">Памятники</string>
     <string name="about">Описание</string>
 
     <string name="dummy_button">На сайт</string>
@@ -45,10 +34,5 @@
     <string name="has_parking">Парковка</string>
     <string name="has_pool">Бассейн</string>
     <string name="has_bathroom">Душ</string>
-
-    <string name="search">Поиск</string>
-    <string name="cancel">Отменить</string>
-    <string name="error">Ошибка!</string>
-    <string name="titleSelectCategory">"Вы не выбрали категории!"</string>
 
 </resources>

@@ -2,11 +2,10 @@ package edu.amd.spbstu.sbpmap.Utils;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Color;
+
 import android.graphics.drawable.Drawable;
 import android.view.View;
-import android.widget.Button;
+
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;

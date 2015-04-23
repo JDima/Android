@@ -93,7 +93,7 @@ public class OstrovokAPI implements API {
 
             StringBuilder sb = new StringBuilder();
             for (String filter : oip.getAdds()) {
-                sb.append("- " + singlePlaceActivity.getString(ADDS.get(filter)) + "\n");
+                sb.append("- ").append(singlePlaceActivity.getString(ADDS.get(filter))).append("\n");
             }
             TextViewUtil.setTextViewText((TextView) singlePlaceActivity.findViewById(edu.amd.spbstu.sbpmap.R.id.price_include), sb.toString());
         }
@@ -119,8 +119,10 @@ public class OstrovokAPI implements API {
             e.printStackTrace();
         }
 
-        String response = new String(buffer);
-        return response;
+        if (buffer != null) {
+            return new String(buffer);
+        }
+        return null;
     }
 
     @Override

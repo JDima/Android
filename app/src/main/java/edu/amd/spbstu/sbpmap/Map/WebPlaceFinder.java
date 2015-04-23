@@ -3,27 +3,14 @@ package edu.amd.spbstu.sbpmap.Map;
 
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.AssetManager;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
-import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -38,8 +25,6 @@ import edu.amd.spbstu.sbpmap.Restoclub.RestoclubAPI;
 import edu.amd.spbstu.sbpmap.Utils.APIRequest;
 import edu.amd.spbstu.sbpmap.Utils.AlertDialogManager;
 import edu.amd.spbstu.sbpmap.Utils.LatLngBounds;
-import edu.amd.spbstu.sbpmap.Utils.QustomDialogBuilder;
-import edu.amd.spbstu.sbpmap.Utils.QustomProgressDialog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +36,6 @@ public class WebPlaceFinder {
     private Map<String, ArrayList<PlaceFinder>> tasksList = new HashMap<>();
     private Map<String, String> imgMarkers = new HashMap<>();
     private WebView myWebView;
-    private Activity activity;
     private static ProgressDialog pDialog;
     private Context mContext;
     private AssetManager assetManager;
@@ -88,8 +72,7 @@ public class WebPlaceFinder {
             for (String key : requestList.keySet()) {
                 String queryMsg = MainActivity.isEnglish ? key : AlertDialogManager.RU_VENUES[Arrays.asList(WebPlaceFinder.VENUES).indexOf(key)];
                 if (requestList.get(key) != -1) {
-                    sb.append(queryMsg + " - " +  Integer.toString(requestList.get(key)) +
-                            (MainActivity.isEnglish ? " objects" : " объектов") +  "\n");
+                    sb.append(queryMsg).append(" - ").append(Integer.toString(requestList.get(key))).append(MainActivity.isEnglish ? " objects" : " объектов").append("\n");
                 } else {
                     sb.append("Request timeout!\n");
                 }
@@ -107,9 +90,8 @@ public class WebPlaceFinder {
         }
     }
 
-    public WebPlaceFinder(Context context, Activity activity, WebView myWebView, AssetManager assetManager) {
+    public WebPlaceFinder(Context context, WebView myWebView, AssetManager assetManager) {
         this.myWebView = myWebView;
-        this.activity = activity;
         mContext = context;
         for (String query : VENUES) {
             tasksList.put(query, new ArrayList<PlaceFinder>());
@@ -149,7 +131,7 @@ public class WebPlaceFinder {
         String msg = MainActivity.isEnglish ? "Searching ..." : "Поиск ...";
         pDialog.setMessage(msg);
         pDialog.setProgress(0);
-        pDialog.setProgressStyle(pDialog.STYLE_HORIZONTAL);
+        pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         pDialog.setIndeterminate(false);
         pDialog.setCancelable(false);
         pDialog.setIcon(R.drawable.find);
@@ -179,13 +161,18 @@ public class WebPlaceFinder {
     public void execute(LatLngBounds curLatLngBounds, double lat, double lng, String query, int radius) {
         API api;
         Log.d("Java log", "execute(): query - " + query);
-        if (query.equals(RESTAURANT)) {
-            api = new RestoclubAPI(curLatLngBounds, lat, lng);
-        } else if(query.equals(HOSTEL) || query.equals(HOTEL) || query.equals(MINI_HOTEL)) {
-          api = new OstrovokAPI(assetManager, curLatLngBounds, lat, lng);
-        }
-        else {
-            api = new EtovidelAPI(assetManager, curLatLngBounds, lat, lng);
+        switch (query) {
+            case RESTAURANT:
+                api = new RestoclubAPI(curLatLngBounds, lat, lng);
+                break;
+            case HOSTEL:
+            case HOTEL:
+            case MINI_HOTEL:
+                api = new OstrovokAPI(assetManager, curLatLngBounds, lat, lng);
+                break;
+            default:
+                api = new EtovidelAPI(assetManager, curLatLngBounds, lat, lng);
+                break;
         }
 
         new PlaceFinder().execute(new APIRequest(api, api.getPlacesRequest(query, radius, lat, lng), query));
@@ -211,7 +198,7 @@ public class WebPlaceFinder {
 
         @Override
         protected void onPostExecute(String result) {
-            ArrayList<Place> venues = new ArrayList<>();
+            ArrayList<Place> venues;
             Log.d("Java log", "onPostExecute(): query - " + query);
             if (response != null) {
                 venues = api.parseResponse(response);

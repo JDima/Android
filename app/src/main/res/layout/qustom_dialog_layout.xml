@@ -47,8 +47,7 @@ I should have probably just rewritten similar code, but i was feeling lazy. Mayb
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dip"
-                android:src="@null"
-                android:contentDescription="@string/alert_image_content_description"/>
+                android:src="@null"/>
             <com.android.internal.widget.DialogTitle android:id="@+id/alertTitle"
                 style="@android:style/TextAppearance.Holo.DialogWindowTitle"
                 android:textColor="#ffffff"

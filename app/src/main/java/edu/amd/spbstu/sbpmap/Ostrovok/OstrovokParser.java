@@ -14,7 +14,7 @@ import java.util.LinkedHashSet;
  */
 public class OstrovokParser {
     public static ArrayList<Place> parseResponse(String response, String query, double cenlat, double cenlng, LatLngBounds latLngBounds) {
-        ArrayList<Place> temp = new ArrayList<Place>();
+        ArrayList<Place> temp = new ArrayList<>();
         try {
             JSONArray jsonArray= new JSONArray(response);
 
@@ -41,7 +41,7 @@ public class OstrovokParser {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new ArrayList<Place>();
+            return new ArrayList<>();
         }
         return temp;
     }

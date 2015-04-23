@@ -38,7 +38,7 @@ public class RestoclubParser {
     }
 
     public static ArrayList<Place> parseResponse(String response, double cenlat, double cenlng, LatLngBounds latLngBounds) {
-        ArrayList<Place> temp = new ArrayList<Place>();
+        ArrayList<Place> temp = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(response);
 
@@ -67,7 +67,7 @@ public class RestoclubParser {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new ArrayList<Place>();
+            return new ArrayList<>();
         }
         return temp;
     }

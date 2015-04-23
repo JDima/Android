@@ -45,7 +45,7 @@ class RefreshHandler extends Handler
         this.removeMessages(0);
         sendMessageDelayed(obtainMessage(0), delayMillis);
     }
-};
+}
 
 // ****************************************************************
 // class AppView
@@ -180,11 +180,6 @@ public class ActivityMain extends Activity implements MediaPlayer.OnCompletionLi
     protected void onPostCreate(Bundle savedInstanceState)
     {
         super.onPostCreate(savedInstanceState);
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {

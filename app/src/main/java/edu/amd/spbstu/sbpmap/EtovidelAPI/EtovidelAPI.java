@@ -93,8 +93,10 @@ public class EtovidelAPI implements API {
             e.printStackTrace();
         }
 
-        String response = new String(buffer);
-        return response;
+        if (buffer != null) {
+            return new String(buffer);
+        }
+        return null;
     }
 
     @Override
