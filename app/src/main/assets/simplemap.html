@@ -115,15 +115,30 @@
             }
             var myLatlng = new google.maps.LatLng(latitude,longitude);
 
+            var styles = [
+                {
+                    featureType: "poi",
+                    elementType: "labels",
+                    stylers: [
+                      { visibility: "off" }
+                    ]
+                }
+            ];
+
             var mapOptions = {
                 zoom: 10,
                 center: defLatLng,
                 disableDefaultUI: true,
                 zoomControl: false,
+                overviewMapControl: false,
+                keyboardShortcuts: false,
+                mapMaker: false,
+                streetViewControl: false,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
 
             map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            map.setOptions({styles: styles});
 
             google.maps.event.addListener(map, 'click', function(event) {
                 singleClick = true;
